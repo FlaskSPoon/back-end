@@ -15,5 +15,5 @@ export class CreateUserDto implements Prisma.UserCreateInput{
       @IsString()
       @MinLength(6, { message: 'Le mot de passe doit contenir au moins 6 caractères.' })
       readonly password: string;
-     
+      role: Prisma.RoleCreateNestedOneWithoutUsersInput;
 }
