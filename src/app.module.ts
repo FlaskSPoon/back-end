@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ArticleModule } from './article/article.module';
 
 
 
@@ -26,7 +27,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     database: process.env.DB_NAME || 'fireshieldsec',
     
     synchronize: true, 
-  }),UsersModule, PrismaModule, DatabaseModule, AuthModule,JwtModule],
+  }),UsersModule, PrismaModule, DatabaseModule, AuthModule,JwtModule, ArticleModule],
   controllers: [UserController],
   providers: [PrismaService, UserService,DatabaseService,AuthService,JwtService],
   exports:[]

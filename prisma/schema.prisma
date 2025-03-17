@@ -23,3 +23,22 @@ model User {
   role      Role     @relation(fields: [roleId], references: [id])
 }
 
+model Article {
+  id          Int       @id @default(autoincrement())
+  titre       String    @db.VarChar(255)
+  description String?
+  datePublication DateTime @default(now())
+  statut      Boolean
+  contenus    Contenu[] // Relation 1:N avec Contenu
+}
+
+model Contenu {
+  id          Int       @id @default(autoincrement())
+  titre       String    @db.VarChar(255)
+  description String?
+  datePublication DateTime @default(now())
+  image       String?
+  statut      Boolean
+  articleId   Int
+  article     Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}

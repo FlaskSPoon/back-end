@@ -144,16 +144,21 @@ export class AuthService {
   }
 
   private async validateRole(roleName: string) {
-    const role = await this.database.role.findUnique({
-      where: { name: roleName },
-    });
-
-    if (!role) {
-      throw new NotFoundException(`Le rôle ${roleName} est invalide`);
+    if (!roleName) {
+      throw new Error('Role name is required');
     }
-
+  
+    const role = await this.database.role.findUnique({
+      where: { name: roleName }, 
+    });
+  
+    if (!role) {
+      throw new Error(`Role "${roleName}" not found`);
+    }
+  
     return role;
   }
+  
 
   private async hashPassword(password: string): Promise<string> {
     return hash(password, 10);

@@ -60,6 +60,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUser: CreateUser) {
     try {
+      console.log('Received createUser:', createUser); 
       return await this.authService.register(createUser);
     } catch (error) {
       if (error instanceof ConflictException) {
@@ -72,7 +73,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: [User] })
   @Roles('ADMIN')
-  @UseGuards(AuthGuard('jwt'), RolesGuard) 
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  
   @Get()
   async getUsers() {
     return await this.userService.getUsers();
