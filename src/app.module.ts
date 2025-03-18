@@ -12,22 +12,28 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticleModule } from './article/article.module';
+import { Article } from './article/entities/article.entity';
+import { User } from './users/entities/user.entity';
+import { RoleModule } from './role/role.module';
+import { RoleService } from './role/role.service';
+import { Role } from './role/entities/role.entity';
+import { Any } from 'typeorm';
 
 
 
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-  }),TypeOrmModule.forRoot({
+  imports: [TypeOrmModule.forRoot({
     type: 'mysql', // Changez 'postgres' en 'mysql'
     host: process.env.DB_HOST || 'localhost',
     port: Number(process.env.DB_PORT) || 3306, 
     username: process.env.DB_USER || 'root', 
     password: process.env.DB_PASS || '',
-    database: process.env.DB_NAME || 'fireshieldsec',
-    
-    synchronize: true, 
-  }),UsersModule, PrismaModule, DatabaseModule, AuthModule,JwtModule, ArticleModule],
+    database: process.env.DB_NAME || 'flasksPoon-fs',
+    synchronize:false,
+    autoLoadEntities:true
+  }),ConfigModule.forRoot({
+    isGlobal: true,
+  }),UsersModule, PrismaModule, DatabaseModule, AuthModule,JwtModule,RoleModule,ArticleModule],
   controllers: [UserController],
   providers: [PrismaService, UserService,DatabaseService,AuthService,JwtService],
   exports:[]

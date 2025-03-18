@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(@Inject(forwardRef(() => RoleService))
+    private readonly database: DatabaseService) {}
 
   async getUsers() {
     return this.database.user.findMany({
