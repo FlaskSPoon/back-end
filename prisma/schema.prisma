@@ -31,6 +31,28 @@ model Article {
   description String?
   datePublication DateTime @default(now())
   statut      Boolean
-   userId  Int
-  user    User     @relation(fields: [userId], references: [id])
+  category    String  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+   user_id  Int
+  user    User     @relation(fields: [user_id], references: [id])
+}
+
+
+model Evenement {
+  id             Int              @id @default(autoincrement())
+  title          String           
+  description    String          
+  dateEvenement  DateTime         
+  categoryId     Int              
+  category       CategoryEvenement @relation(fields: [categoryId], references: [id])
+}
+
+model Webinaire {
+  id             Int              @id @default(autoincrement())
+  title          String           
+  description    String           
+  dateWebinaire  DateTime         
+  categoryId     Int              
+  category       CategoryWebinaire @relation(fields: [categoryId], references: [id])
 }

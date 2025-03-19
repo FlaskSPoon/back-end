@@ -12,12 +12,8 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticleModule } from './article/article.module';
-import { Article } from './article/entities/article.entity';
-import { User } from './users/entities/user.entity';
 import { RoleModule } from './role/role.module';
-import { RoleService } from './role/role.service';
-import { Role } from './role/entities/role.entity';
-import { Any } from 'typeorm';
+
 
 
 

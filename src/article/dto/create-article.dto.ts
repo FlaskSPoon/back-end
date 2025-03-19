@@ -18,8 +18,13 @@ export class CreateArticleDto{
   datePublication: string; 
 
   @ApiProperty()
+  @IsString()
+  category: string;
+
+  @ApiProperty()
   @IsBoolean()
   statut: boolean; 
+  
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()

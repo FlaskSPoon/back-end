@@ -9,7 +9,7 @@ export class Article  {
   readonly id: number;
 
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   readonly titre: string;
 
   @ApiProperty()
@@ -18,8 +18,11 @@ export class Article  {
 
   @ApiProperty()
   @Column()
-  readonly datePublication: Date; 
-
+  readonly datePublication: Date;
+  
+  @ApiProperty() 
+  @Column({ nullable: true })
+  category: string;
   @ApiProperty()
   @Column()
   readonly statut: boolean;

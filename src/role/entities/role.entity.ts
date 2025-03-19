@@ -10,7 +10,7 @@ export class Role {
 @ApiProperty()
   @Column({ unique: true })
   name: string;
-
   @OneToMany(() => User, (user) => user.role)
   users: User[];
+  
 }

@@ -4,10 +4,8 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Hasher le mot de passe pour l'utilisateur admin
   const hashedPassword = await bcrypt.hash('admin123', 10);
 
-  // Créer ou mettre à jour les rôles ADMIN et USER
   const adminRole = await prisma.role.upsert({
     where: { name: 'ADMIN' }, 
     update: {}, 
@@ -20,7 +18,6 @@ async function main() {
     create: { name: 'USER' }, 
   });
 
-  // Créer ou mettre à jour l'utilisateur admin avec le rôle ADMIN
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@admin.com' }, 
     update: {}, 
@@ -34,8 +31,6 @@ async function main() {
     },
   });
 
-  console.log('Seeding terminé avec succès ✅');
-  console.log({ adminRole, userRole, adminUser }); 
 }
 
 main()
@@ -44,5 +39,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect(); // Fermer la connexion Prisma
+    await prisma.$disconnect(); 
   });

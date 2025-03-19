@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { PaginationQueryDto } from './dto/pagination-query.dto'; 
+import { FilterArticlesDto } from './dto/filter-articles.dto';
+
 
 @Injectable()
 export class ArticleService {
@@ -17,32 +20,60 @@ export class ArticleService {
   ) {}
 
   async create(createArticleDto: CreateArticleDto): Promise<Article> {
-    const { userId, titre, description, datePublication, statut } = createArticleDto;
+    const { userId, titre, description, datePublication,category, statut } = createArticleDto;
 
-    // Recherche de l'utilisateur par ID
     const user = await this.userRepository.findOne({
       where: { id: userId },
-    
     });
 
     if (!user) {
       throw new NotFoundException('Utilisateur non trouvé');
     }
 
-    // Création de l'article et association avec l'utilisateur
+   
     const article = this.articleRepository.create({
       titre,
       description,
       datePublication,
+      category,
       statut,
-      user, // L'utilisateur associé à l'article
+      user, 
     });
 
     return this.articleRepository.save(article);
   }
 
-  findAll() {
-    return `This action returns all article`;
+ 
+  async findAll(paginationQuery: PaginationQueryDto, filterQuery: FilterArticlesDto) {
+    const { page, limit } = paginationQuery;
+    const { titre, statut, category } = filterQuery;
+
+    const queryBuilder = this.articleRepository.createQueryBuilder('article');
+
+    
+    if (titre) {
+      queryBuilder.andWhere('article.titre LIKE :titre', { titre: `%${titre}%` });
+    }
+
+    if (statut) {
+      queryBuilder.andWhere('article.statut = :statut', { statut });
+    }
+
+    if (category) {
+      queryBuilder.andWhere('article.categorie = :categorie', { category });
+    }
+
+    
+    queryBuilder.skip((page - 1) * limit).take(limit);
+
+    const [articles, totalCount] = await queryBuilder.getManyAndCount();
+
+    return {
+      data: articles,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+    };
   }
 
   findOne(id: number) {

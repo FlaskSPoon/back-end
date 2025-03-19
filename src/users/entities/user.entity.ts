@@ -16,10 +16,8 @@ export class User implements User {
    @ApiProperty()
   @Column()
   roleId: number;
-
   @ManyToOne(() => Role, (role) => role.users, { onDelete: "CASCADE" })
   role: Role;
-
   @OneToMany(() => Article, (article) => article.user)
   articles: Article[];
 }
