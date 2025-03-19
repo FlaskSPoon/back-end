@@ -11,7 +11,6 @@ import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from 'src/database/database.service';
 import { hash, compare } from 'bcrypt';
 import { UserPayload } from './jwt.strategy';
-import { RoleService } from 'src/role/role.service';
 
 interface AuthBody {
   email: string;

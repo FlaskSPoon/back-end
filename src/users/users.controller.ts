@@ -11,38 +11,48 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
   constructor(private userService: UserService) {}
 
+ 
   @Get()
-  @Roles('ADMIN')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @ApiOkResponse({ type: [User] })
+  @ApiOkResponse({ type: User })
   async findAll() {
-    return this.userService.getUsers();
+    return await this.userService.getUsers();
   }
 
-  @Get('profile') 
-  @UseGuards(AuthGuard('jwt'))
-  async getProfile(@Request() req) {
-    return this.userService.getUser({ userId: req.user.id });
+  @Get('/:userId')
+   
+  getUser(@Param('userId') userId: number) {
+    return this.userService.getUser({ userId });
   }
 
-  @Get(':id') 
-  @Roles('ADMIN') 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findOne(id);
+  
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id);
   }
 
+  
   @Patch(':id')
-  @Roles('ADMIN')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async update(@Param('id', ParseIntPipe) id: number, @Body() data: any) {
-    return this.userService.update(id, data);
+  // @Roles('ADMIN')
+  // @UseGuards(AuthGuard('jwt')) 
+  async update(@Param('id') id: string, @Body() data: any) {
+    return this.userService.update(+id, data);
   }
 
+  
   @Delete(':id')
-  @Roles('ADMIN')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.remove(id);
+
+  async remove(@Param('id') id: string) {
+    return this.userService.remove(+id);
   }
+
+//   @Patch(':id/role')
+// @Roles('ADMIN') // Seul un ADMIN peut modifier le rôle
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
+// async updateUserRole(
+//   @Request() req, // Récupérer l'admin qui fait la requête
+//   @Param('id') userId: number,
+//   @Body('role') newRole: string,
+// ) {
+//   return this.userService.updateRole(req.user.userId, Number(userId), newRole);
+// }
 }
