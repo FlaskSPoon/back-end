@@ -7,9 +7,12 @@ export class Role {
     @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
+
 @ApiProperty()
   @Column({ unique: true })
   name: string;
+  
+@ApiProperty()
   @OneToMany(() => User, (user) => user.role)
   users: User[];
   

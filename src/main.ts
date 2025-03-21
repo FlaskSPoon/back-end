@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import "reflect-metadata";
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
 
@@ -10,7 +11,11 @@ async function bootstrap() {
     .setTitle('Fireshield Security API')
     .setDescription('site web')
     .setVersion('1.0')
-    .addTag('users')
+    // .addTag('users')
+    // .addTag('event')
+    // .addTag('webu')
+    // .addTag('CategoryEvent')
+    // .addTag('CategoryWebu')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

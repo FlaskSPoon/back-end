@@ -1,14 +1,16 @@
 import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleService } from 'src/role/role.service';
 
 @Injectable()
 export class UserService {
   constructor(@Inject(forwardRef(() => RoleService))
-    private readonly database: DatabaseService) {}
+    private readonly database: DatabaseService,
+  private readonly prisma: PrismaService) {}
 
   async getUsers() {
-    return this.database.user.findMany({
+    return await this.prisma.user.findMany({
       select: {
         id: true,
         email: true,
@@ -18,8 +20,9 @@ export class UserService {
   }
 
   async getUser({ userId }: { userId: number }) {
-    const user = await this.database.user.findUnique({
-      where: { id: userId },
+    const id = Number(userId);
+    const user = await this.prisma.user.findUnique({
+      where: { id},
       select: {
         id: true,
         email: true,
@@ -35,14 +38,14 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    return this.database.user.findUnique({ where: { id } });
+    return await this.database.user.findUnique({ where: { id } });
   }
 
   async update(id: number, data: any) {
-    return this.database.user.update({ where: { id }, data });
+    return await this.database.user.update({ where: { id }, data });
   }
 
   async remove(id: number) {
-    return this.database.user.delete({ where: { id } });
+    return await this.database.user.delete({ where: { id } });
   }
 }

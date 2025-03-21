@@ -74,7 +74,7 @@ export class AuthController {
   @ApiOkResponse({ type: [User] })
   @Roles('ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)  
-  @Get()
+  @Get('users')
   async getUsers() {
     return await this.userService.getUsers();
   }
@@ -107,6 +107,8 @@ export class AuthController {
       throw new NotFoundException(error.message);
     }
   }
+
+  @ApiBearerAuth()
   @Patch(':id/role')
 @Roles('ADMIN') 
 @UseGuards(AuthGuard('jwt'), RolesGuard)

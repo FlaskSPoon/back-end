@@ -20,23 +20,28 @@ model User {
   password String
   username String
    roleId    Int
-  role      Role     @relation(fields: [roleId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
   articles  Article[]
 }
 
+
+enum ArticleStatut {
+   BROUILLON
+   PUBLIÉ
+  ARCHIVÉS
+}
 
 model Article {
   id          Int       @id @default(autoincrement())
   titre       String    @db.VarChar(255)
   description String?
   datePublication DateTime @default(now())
-  statut      Boolean
-  category    String  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-   user_id  Int
-  user    User     @relation(fields: [user_id], references: [id])
+  statut      ArticleStatut @default(BROUILLON)
+  category    String
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 }
+
 
 
 model Evenement {
@@ -55,4 +60,98 @@ model Webinaire {
   dateWebinaire  DateTime         
   categoryId     Int              
   category       CategoryWebinaire @relation(fields: [categoryId], references: [id])
+}
+
+model CategoryWebinaire {
+  id          Int          @id @default(autoincrement())
+  name        String       
+  description String?      
+  createdAt   DateTime     @default(now())      
+  Webinaires  Webinaire[]  
+}
+
+model CategoryEvenement {
+  id          Int          @id @default(autoincrement())
+  name        String       
+  description String?      
+  createdAt   DateTime     @default(now())     
+  Evenements  Evenement[] 
+}
+
+model CategoryService {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+   updatedAt   DateTime @updatedAt 
+  services  Service[] // Relation avec le modèle Service
+}
+
+model Service {
+  id            Int          @id @default(autoincrement())
+  name          String
+  description   String
+  price         Float
+  categoryId    Int
+  createdAt     DateTime     @default(now())
+  updatedAt   DateTime @updatedAt 
+  category      CategoryService @relation(fields: [categoryId], references: [id]) 
+}
+
+
+enum LeadStatus {
+   EN_ATTENTE
+   EN_COURS
+   TERMINÉ
+}
+
+model Lead {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String
+  message    String
+  status     LeadStatus   @default(EN_ATTENTE)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+
+model Partenaire {
+  id          Int      @id @default(autoincrement())
+  nom         String
+  description String?
+  logo        String?
+  siteWeb     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  contact    String?
+  utilisateurs Utilisateur[]
+
+}
+
+model Utilisateur {
+  id          Int      @id @default(autoincrement())
+  nom         String
+  email       String
+  partenaireId Int?
+  partenaire   Partenaire? @relation(fields: [partenaireId], references: [id])
+   ressources  Ressource[]
+}
+
+model Ressource {
+  id          Int      @id @default(autoincrement()) 
+  titre       String  
+  description String? 
+  contenu     String   
+  type        String   
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt 
+  auteurId    Int?     
+  auteur      Utilisateur? @relation(fields: [auteurId], references: [id])
+}
+
+
+model NewsletterSubscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
 }

@@ -5,19 +5,29 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 @Entity()
 export class User implements User {
       @PrimaryGeneratedColumn()
-    @ApiProperty()
+    
     id:number;
+
     @ApiProperty()
     username: string;
+
     @ApiProperty()
     email:string;
+
     @ApiProperty()
     password: string;
+
    @ApiProperty()
   @Column()
   roleId: number;
+
+
+  @ApiProperty()
   @ManyToOne(() => Role, (role) => role.users, { onDelete: "CASCADE" })
-  role: Role;
+  role: ()=>Role;
+
+
+  @ApiProperty()
   @OneToMany(() => Article, (article) => article.user)
   articles: Article[];
 }

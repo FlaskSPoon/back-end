@@ -1,8 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsEnum, IsOptional } from "class-validator";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ArticleStatut } from "./enuArticle";
 
-@Entity()
+@Entity('article')
 export class Article  {
 @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -21,12 +23,17 @@ export class Article  {
   readonly datePublication: Date;
   
   @ApiProperty() 
-  @Column({ nullable: true })
-  category: string;
-  @ApiProperty()
   @Column()
-  readonly statut: boolean;
+  category: string;
+  
 
+ @Column({ type: 'enum', enum: ArticleStatut, default: ArticleStatut.BROUILLON })
+  @IsOptional()
+  @IsEnum(ArticleStatut)
+  statut?: ArticleStatut;
+
+
+  @ApiProperty()
   @ManyToOne(() => User, (user) => user.articles , { onDelete: 'CASCADE'}) 
   @JoinColumn({ name: 'user_id' }) 
   user: User;

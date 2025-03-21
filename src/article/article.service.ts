@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { PaginationQueryDto } from './dto/pagination-query.dto'; 
 import { FilterArticlesDto } from './dto/filter-articles.dto';
+import { ArticleStatut } from './entities/enuArticle';
 
 
 @Injectable()
@@ -31,50 +32,57 @@ export class ArticleService {
     }
 
    
-    const article = this.articleRepository.create({
+   const article = this.articleRepository.create({
       titre,
       description,
       datePublication,
       category,
-      statut,
+      statut:ArticleStatut.PUBLIÉ,
       user, 
     });
 
-    return this.articleRepository.save(article);
+    return  this.articleRepository.save(article);
   }
 
- 
   async findAll(paginationQuery: PaginationQueryDto, filterQuery: FilterArticlesDto) {
     const { page, limit } = paginationQuery;
     const { titre, statut, category } = filterQuery;
-
+  
+    // Vérification et conversion explicite
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 10;
+  
+    if (isNaN(pageNumber) || isNaN(limitNumber)) {
+      throw new BadRequestException('Page and limit must be valid numbers');
+    }
+  
     const queryBuilder = this.articleRepository.createQueryBuilder('article');
-
-    
+  
     if (titre) {
       queryBuilder.andWhere('article.titre LIKE :titre', { titre: `%${titre}%` });
     }
-
+  
     if (statut) {
       queryBuilder.andWhere('article.statut = :statut', { statut });
     }
-
+  
     if (category) {
-      queryBuilder.andWhere('article.categorie = :categorie', { category });
+      queryBuilder.andWhere('article.category = :category', { category });
     }
-
-    
-    queryBuilder.skip((page - 1) * limit).take(limit);
-
+  
+   
+    queryBuilder.skip((pageNumber - 1) * limitNumber).take(limitNumber);
+  
     const [articles, totalCount] = await queryBuilder.getManyAndCount();
-
+  
     return {
       data: articles,
       totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
+      totalPages: Math.ceil(totalCount / limitNumber),
+      currentPage: pageNumber,
     };
   }
+  
 
   findOne(id: number) {
     return `This action returns a #${id} article`;

@@ -3,8 +3,8 @@ import { UserService } from './users.service';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { Roles } from 'src/auth/roles.decorator';
-import { RolesGuard } from 'src/auth/roles.guard'; 
-import { AuthGuard } from '@nestjs/passport'; 
+import { AuthGuard } from '@nestjs/passport';
+
 
 @Controller('users')
 @ApiTags('users')
@@ -19,7 +19,7 @@ export class UserController {
   }
 
   @Get('/:userId')
-   
+  @ApiOkResponse({ type: User })
   getUser(@Param('userId') userId: number) {
     return this.userService.getUser({ userId });
   }
@@ -32,8 +32,8 @@ export class UserController {
 
   
   @Patch(':id')
-  // @Roles('ADMIN')
-  // @UseGuards(AuthGuard('jwt')) 
+   @Roles('ADMIN')
+  @UseGuards(AuthGuard('jwt')) 
   async update(@Param('id') id: string, @Body() data: any) {
     return this.userService.update(+id, data);
   }
@@ -45,14 +45,4 @@ export class UserController {
     return this.userService.remove(+id);
   }
 
-//   @Patch(':id/role')
-// @Roles('ADMIN') // Seul un ADMIN peut modifier le rôle
-// @UseGuards(AuthGuard('jwt'), RolesGuard)
-// async updateUserRole(
-//   @Request() req, // Récupérer l'admin qui fait la requête
-//   @Param('id') userId: number,
-//   @Body('role') newRole: string,
-// ) {
-//   return this.userService.updateRole(req.user.userId, Number(userId), newRole);
-// }
 }
