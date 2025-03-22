@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryServiceDto } from './dto/create-category-service.dto';
 import { UpdateCategoryServiceDto } from './dto/update-category-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,12 +29,22 @@ private readonly categoryServices: Repository<CategoryService>
     }
     return cateServi;
   }
-
-  update(id: number, updateCategoryServiceDto: UpdateCategoryServiceDto) {
-    return `This action updates a #${id} categoryService`;
+  
+  
+  async update(id: number, updateCategoryServiceDto: UpdateCategoryServiceDto):Promise<CategoryService> {
+    const cateservice=await this.categoryServices.findOne({where:{id}});
+    if (!cateservice) {
+      throw new NotFoundException(`Category Service avec l'ID ${id} non trouvé`)
+    }
+    return await this.categoryServices.save(cateservice);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoryService`;
+  async remove(id: number):Promise<{message:string}> {
+    const cateser= await this.categoryServices.findOne({where:{id}});
+    if (!cateser) {
+      throw new NotFoundException(`Category Service avec l'ID ${id} non trouvé`);
+    }
+    await this.categoryServices.remove(cateser);
+    return {message:`Category Service avec l'ID ${id} supprimé avec succès`};
   }
 }

@@ -82,17 +82,32 @@ export class ArticleService {
       currentPage: pageNumber,
     };
   }
+
+
+ async findOne(id: number):Promise<Article> {
+  const article= await this.articleRepository.findOne({where:{id}});
+  if (!article) {
+    throw new Error(`Article avec l'ID ${id} non trouvé`);
+  }
+    return article;
+  }
+
+   async update(id: number, updateArticleDto: UpdateArticleDto): Promise<Article>  {
+    const article=await this.articleRepository.findOne({where:{id}});
+    if (!article) {
+      throw new NotFoundException(`Article avec l'ID ${id} non trouvé`);
+    }
+    Object.assign(article,updateArticleDto);
+    return  await this.articleRepository.save(article);
+  }
+
   
-
-  findOne(id: number) {
-    return `This action returns a #${id} article`;
-  }
-
-  update(id: number, updateArticleDto: UpdateArticleDto) {
-    return `This action updates a #${id} article`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} article`;
+  async remove(id: number): Promise<{message:string}>  {
+    const article=await this.articleRepository.findOne({where:{id}});
+    if (!article) {
+      throw new NotFoundException(`Article avec l'ID ${id} non trouvé`);
+    }
+    await this.articleRepository.remove(article);
+    return {message:`Article avec l'ID ${id} supprimé avec succès`};
   }
 }

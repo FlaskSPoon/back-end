@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryEvenementDto } from './dto/create-category-evenement.dto';
 import { UpdateCategoryEvenementDto } from './dto/update-category-evenement.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,11 +28,22 @@ export class CategoryEvenementService {
     }
     return cateEv;
   }
-  update(id: number, updateCategoryEvenementDto: UpdateCategoryEvenementDto) {
-    return `This action updates a #${id} categoryEvenement`;
+
+ 
+  async update(id: number, updateCategoryEvenementDto: UpdateCategoryEvenementDto):Promise<CategoryEvenement> {
+    const cateEv=await this.categoryEvenementRepository.findOne({where:{id}});
+    if (!cateEv) {
+      throw new NotFoundException(`Category Evenement avec l'ID ${id} non trouvé`);
+    }
+    return await this.categoryEvenementRepository.save(cateEv);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoryEvenement`;
+  async remove(id: number):Promise<{message:string}> {
+    const cateEv=await this.categoryEvenementRepository.findOne({where:{id}});
+    if (!cateEv) {
+      throw new NotFoundException(`Category Evenement avec l'ID ${id} non trouvé`);
+    }
+      await this.categoryEvenementRepository.remove(cateEv);
+      return {message:`Category Evenement avec l'ID ${id} supprimé avec succès`};
   }
 }

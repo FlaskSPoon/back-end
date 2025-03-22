@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateCategoryWebunaireDto } from './dto/update-category-webunaire.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryWebinaire } from './entities/category-webunaire.entity';
@@ -30,11 +30,20 @@ export class CategoryWebunaireService {
 
   }
 
-  update(id: number, updateCategoryWebunaireDto: UpdateCategoryWebunaireDto) {
-    return `This action updates a #${id} categoryWebunaire`;
+   async update(id: number, updateCategoryWebunaireDto: UpdateCategoryWebunaireDto) :Promise <CategoryWebinaire>{
+    const cateWeb=await this.categoryWebinaireRepository.findOne({where:{id}});
+  if (!cateWeb) {
+    throw new NotFoundException(`Category Webunaire avec l'ID ${id} non trouvé`)
+  }
+    return await this.categoryWebinaireRepository.save(cateWeb);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoryWebunaire`;
+  async remove(id: number) :Promise<{message:string}>{
+    const cateWeb=await this.categoryWebinaireRepository.findOne({where:{id}});
+    if (!cateWeb) {
+      throw new NotFoundException(`Category Webunaire avec l'ID ${id} non trouvé`);
+    }
+    await this.categoryWebinaireRepository.remove(cateWeb);
+    return {message:`Category Webunaire avec l'ID ${id} supprimé avec succès`};
   }
 }

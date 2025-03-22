@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEvenementDto } from './dto/create-evenement.dto';
 import { UpdateEvenementDto } from './dto/update-evenement.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,11 +30,24 @@ export class EvenementService {
     return evenement;
 
   }
-  update(id: number, updateEvenementDto: UpdateEvenementDto) {
-    return `This action updates a #${id} evenement`;
+
+
+  
+  async update(id: number, updateEvenementDto: UpdateEvenementDto):Promise<Evenement> {
+    const evenement=await this.evenementRepository.findOne({where:{id}});
+    if (!evenement) {
+      throw new NotFoundException(`Evenement avec l'ID ${id} non trouvé`);
+    }
+    Object.assign(evenement,updateEvenementDto);
+    return await this.evenementRepository.save(evenement);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} evenement`;
+  async remove(id: number):Promise<{message:string}> {
+    const evenement=await this.evenementRepository.findOne({where:{id}});
+    if (!evenement) {
+      throw new NotFoundException(`Evenement avec l'ID ${id} non trouvé`); 
+    }
+    await this.evenementRepository.remove(evenement);
+    return {message:`Evenement avec l'ID ${id} supprimé avec succès`}
   }
 }

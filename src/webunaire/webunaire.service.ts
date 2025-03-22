@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateWebunaireDto } from './dto/update-webunaire.dto';
 import { CreateWebinaireDto } from './dto/create-webunaire.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,11 +30,20 @@ export class WebunaireService {
   }
 
   
-  update(id: number, updateWebunaireDto: UpdateWebunaireDto) {
-    return `This action updates a #${id} webunaire`;
+   async update(id: number, updateWebunaireDto: UpdateWebunaireDto):Promise<Webinaire> {
+    const webinaire=await this.webinaireRepository.findOne({where:{id}});
+    if (!webinaire) {
+      throw new NotFoundException(`Webinaire avec l'ID ${id} non trouvé`)
+    }
+    return await this.webinaireRepository.save(webinaire);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} webunaire`;
+   async remove(id: number):Promise<{message:string}> {
+    const webinaire=await this.webinaireRepository.findOne({where:{id}});
+    if (!webinaire) {
+      throw new NotFoundException(`Webinaire avec l'ID ${id} non trouvé`);
+    }
+    await this.webinaireRepository.remove(webinaire);
+    return {message:`Webinaire avec l'ID ${id} supprimé avec succès`};
   }
 }

@@ -24,16 +24,17 @@ export class ServicesController {
   }
 
   
-  // @Put(':id')
-  // async update(
-  //   @Param('id') id: number,
-  //   @Body() updateServiceDto: UpdateServiceDto,
-  // ): Promise<Service> {
-  //   return this.servicesService.update(id, updateServiceDto);
-  // }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateServiceDto: UpdateServiceDto,
+  ) {
+    return await this.servicesService.update(+id, updateServiceDto);
+  }
 
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise<{ message: string }> {
-    return this.servicesService.remove(id);
+  async remove(@Param('id') id: string): Promise<{ message: string }> {
+    return await this.servicesService.remove(+id);
   }
 }
