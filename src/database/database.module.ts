@@ -6,10 +6,13 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 import { RoleModule } from 'src/role/role.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([DatabaseModule]),
-  UsersModule,AuthModule,JwtModule,RoleModule],
+  imports:[AuthModule,TypeOrmModule.forFeature([DatabaseModule]),
+  UsersModule,JwtModule,RoleModule, ConfigModule.forRoot({
+      isGlobal: true,
+    })],
   providers: [DatabaseService, AuthService,JwtService],
   exports: [DatabaseService],
 })

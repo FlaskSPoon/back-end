@@ -63,6 +63,7 @@ import { CategoryService } from './category-services/entities/category-service.e
     TypeOrmModule.forFeature([NewlettreSubscribe]),
     TypeOrmModule.forFeature([Service]),
     TypeOrmModule.forFeature([CategoryService]),
+    TypeOrmModule.forFeature([AuthModule]),
 
     ConfigModule.forRoot({
     isGlobal: true,
@@ -72,6 +73,6 @@ import { CategoryService } from './category-services/entities/category-service.e
   controllers: [UserController],
   providers: [PrismaService, UserService,DatabaseService,
     AuthService,JwtService,EvenementService],
-  exports:[]
+  exports:[AppModule]
 })
 export class AppModule {}

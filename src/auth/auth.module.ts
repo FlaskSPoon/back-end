@@ -13,18 +13,19 @@ import { DatabaseService } from 'src/database/database.service';
 import { RoleModule } from 'src/role/role.module';
 import { RoleService } from 'src/role/role.service';
 import { DatabaseModule } from 'src/database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 // import { JwtStrategy } from './jwt.strategy';
  console.log(process.env.JWT_SECRET)
 @Module({
-  imports: [forwardRef(()=>DatabaseModule),UsersModule,RoleModule,ConfigModule.forRoot(),
+  imports: [TypeOrmModule.forFeature([AuthModule]),UsersModule,RoleModule,ConfigModule.forRoot(),
  
     JwtModule.register({
     global: true,
     secret:process.env.JWT_SECRET,
     signOptions: { expiresIn: '30d' },
   }),],
-  providers: [AuthService,PrismaService,JwtStrategy,UserService],
+  providers: [AuthService,PrismaService,JwtStrategy,UserService,DatabaseService],
   controllers: [AuthController],
   exports: [AuthService],
 })

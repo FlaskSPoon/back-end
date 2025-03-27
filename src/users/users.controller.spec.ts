@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserController } from './users.controller';
+import { UserService } from './users.service';
+import { DatabaseService } from 'src/database/database.service';
+import { RoleService } from 'src/role/role.service';
 
-// Mock du UserService
 const mockUserService = {
   getUsers: jest.fn(),
   getUser: jest.fn(),
@@ -13,7 +14,12 @@ const mockUserService = {
   update: jest.fn(),
   remove: jest.fn(),
 };
+const mockDataBaseService={
 
+}
+const mockRoleService={
+  
+}
 describe('UserController', () => {
   let controller: UserController;
 
@@ -25,6 +31,13 @@ describe('UserController', () => {
           provide: UserService,
           useValue: mockUserService,
         },
+        {
+          provide: DatabaseService,
+          useValue: mockDataBaseService,
+        },
+        {provide:RoleService,
+          useValue:mockRoleService,
+        }
       ],
     })
       .overrideGuard(AuthGuard('jwt')) 
