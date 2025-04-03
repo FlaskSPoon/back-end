@@ -13,17 +13,23 @@ import {
   ConflictException,
   Put,
   Request,
+  UsePipes,
+  ValidationPipe,
+  UnauthorizedException,
+  InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/users/users.service';
 import { JwtAuthGuard } from './auth.guard';
 import { Roles } from './roles.decorator';
-import { ApiOkResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags, ApiBearerAuth, ApiOperation, ApiBody, ApiBadRequestResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { User } from 'src/users/entities/user.entity';
 import { RolesGuard } from './roles.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginDto } from './login.dto';
 
-// Classes pour les types (au lieu de `export type`)
 class AuthBody {
   email: string;
   password: string;
@@ -44,32 +50,63 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  @ApiOkResponse({ type: User })
+  // @ApiOkResponse({ type: User })
+  // @Post('login')
+  // @HttpCode(HttpStatus.OK)
+
+  // async login(@Body() createUserDto: CreateUserDto) {
+  //   try {
+  //     return await this.authService.login(createUserDto);
+  //   } catch (error) {
+  //     if (error instanceof UnauthorizedException) {
+  //       throw error; 
+  //     }
+  //     throw new InternalServerErrorException(error.message);
+  //   }
+  // }
+
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() authBody: AuthBody) {
-    try {
-      return await this.authService.login(authBody);
-    } catch (error) {
-      throw new NotFoundException(error.message);
+  @ApiOperation({ summary: 'Connexion utilisateur' })
+  @ApiBody({ type: LoginDto })
+  @ApiOkResponse({ description: 'Connexion réussie' })
+  @ApiBadRequestResponse({ description: 'Données invalides' })
+  @ApiUnauthorizedResponse({ description: 'Identifiants incorrects' })
+  @UsePipes(new ValidationPipe({ 
+    transform: true,
+    whitelist: true,
+    exceptionFactory: (errors) => {
+      const messages = errors.map(error => {
+       
+        if (!error.constraints) {
+          return `${error.property} a une erreur de validation`;
+        }
+        return Object.values(error.constraints).join(', ');
+      });
+      
+      return new BadRequestException({
+        statusCode: 400,
+        message: 'Erreur de validation',
+        errors: messages,
+        timestamp: new Date().toISOString()
+      });
     }
+  }))
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
   }
 
-  @ApiOkResponse({ type: User })
   @Post('register')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() createUser: CreateUser) {
+  async register(@Body() createUserDto: CreateUserDto) {
     try {
-      console.log('Received createUser:', createUser); 
-      return await this.authService.register(createUser);
+      return await this.authService.register(createUserDto);
     } catch (error) {
-      if (error instanceof ConflictException) {
-        throw new ConflictException(error.message);
-      }
       throw error;
     }
   }
-
+  
   @ApiBearerAuth()
   @ApiOkResponse({ type: [User] })
   @Roles('ADMIN')

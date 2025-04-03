@@ -1,20 +1,23 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Prisma } from "@prisma/client";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsString, IsNotEmpty, MinLength } from 'class-validator';
 
-import { IsEmail, IsString, MinLength } from "class-validator";
+export class CreateUserDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  username: string;
 
+  @ApiProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
-export class CreateUserDto implements Prisma.UserCreateInput{
+  @ApiProperty()
+  @IsString()
+  @MinLength(6, { message: 'Le mot de passe doit contenir au moins 6 caractères.' })
+  password: string;
 
-      @ApiProperty()
-      @IsString()
-      readonly username: string;
-      @ApiProperty()
-      @IsEmail()
-      readonly email: string;
-      @ApiProperty()
-      @IsString()
-      @MinLength(6, { message: 'Le mot de passe doit contenir au moins 6 caractères.' })
-      readonly password: string;
-      role: Prisma.RoleCreateNestedOneWithoutUsersInput;
+  @ApiProperty()
+  @IsString()
+  role: string;
 }
