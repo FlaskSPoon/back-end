@@ -7,30 +7,29 @@ async function main() {
   const hashedPassword = await bcrypt.hash('admin123', 10);
 
   const adminRole = await prisma.role.upsert({
-    where: { name: 'ADMIN' }, 
-    update: {}, 
-    create: { name: 'ADMIN' }, 
+    where: { name: 'ADMIN' },
+    update: {},
+    create: { name: 'ADMIN' },
   });
 
   const userRole = await prisma.role.upsert({
     where: { name: 'USER' },
-    update: {}, 
-    create: { name: 'USER' }, 
+    update: {},
+    create: { name: 'USER' },
   });
 
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@admin.com' }, 
-    update: {}, 
+    where: { email: 'admin@admin.com' },
+    update: {},
     create: {
       username: 'admin',
       email: 'admin@admin.com',
       password: hashedPassword,
       role: {
-        connect: { id: adminRole.id }, 
+        connect: { id: adminRole.id },
       },
     },
   });
-
 }
 
 main()
@@ -39,5 +38,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect(); 
+    await prisma.$disconnect();
   });
