@@ -18,7 +18,6 @@ import { WebunaireModule } from './webunaire/webunaire.module';
 import { CategoryEvenementModule } from './category-evenement/category-evenement.module';
 import { CategoryWebunaireModule } from './category-webunaire/category-webunaire.module';
 import { EvenementService } from './evenement/evenement.service';
-import { join } from 'path';
 import { typeOrmConfig } from './ormconfig';
 import { CategoryWebinaire } from './category-webunaire/entities/category-webunaire.entity';
 import { Evenement } from './evenement/entities/evenement.entity';
@@ -40,14 +39,10 @@ import { Partenaire } from './partenaire/entities/partenaire.entity';
 import { NewlettreSubscribe } from './newlettre-subscribe/entities/newlettre-subscribe.entity';
 import { CategoryService } from './category-services/entities/category-service.entity';
 
-
-
-
 @Module({
-  
-    imports: [
-      TypeOrmModule.forRoot(typeOrmConfig), 
-      TypeOrmModule.forFeature([CategoryWebinaire]), 
+  imports: [
+    TypeOrmModule.forRoot(typeOrmConfig),
+    TypeOrmModule.forFeature([CategoryWebinaire]),
     TypeOrmModule.forFeature([Evenement]),
     TypeOrmModule.forFeature([Webinaire]),
     TypeOrmModule.forFeature([CategoryWebinaire]),
@@ -66,13 +61,36 @@ import { CategoryService } from './category-services/entities/category-service.e
     TypeOrmModule.forFeature([AuthModule]),
 
     ConfigModule.forRoot({
-    isGlobal: true,
-  }),UsersModule, PrismaModule, DatabaseModule, AuthModule,
-  JwtModule,RoleModule,ArticleModule, EvenementModule,
-   WebunaireModule, CategoryEvenementModule, CategoryWebunaireModule, ServicesModule, CategoryServicesModule, PartenaireModule, LeadModule, UtilisateurModule, RessourceModule, NewlettreSubscribeModule],
+      isGlobal: true,
+    }),
+    UsersModule,
+    PrismaModule,
+    DatabaseModule,
+    AuthModule,
+    JwtModule,
+    RoleModule,
+    ArticleModule,
+    EvenementModule,
+    WebunaireModule,
+    CategoryEvenementModule,
+    CategoryWebunaireModule,
+    ServicesModule,
+    CategoryServicesModule,
+    PartenaireModule,
+    LeadModule,
+    UtilisateurModule,
+    RessourceModule,
+    NewlettreSubscribeModule,
+  ],
   controllers: [UserController],
-  providers: [PrismaService, UserService,DatabaseService,
-    AuthService,JwtService,EvenementService],
-  exports:[AppModule]
+  providers: [
+    PrismaService,
+    UserService,
+    DatabaseService,
+    AuthService,
+    JwtService,
+    EvenementService,
+  ],
+  exports: [AppModule],
 })
 export class AppModule {}
