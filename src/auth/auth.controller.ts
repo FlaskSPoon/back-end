@@ -50,21 +50,6 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  // @ApiOkResponse({ type: User })
-  // @Post('login')
-  // @HttpCode(HttpStatus.OK)
-
-  // async login(@Body() createUserDto: CreateUserDto) {
-  //   try {
-  //     return await this.authService.login(createUserDto);
-  //   } catch (error) {
-  //     if (error instanceof UnauthorizedException) {
-  //       throw error; 
-  //     }
-  //     throw new InternalServerErrorException(error.message);
-  //   }
-  // }
-
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Connexion utilisateur' })

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, BadRequestException } from '@nestjs/common';
 import { EvenementService } from './evenement.service';
 import { CreateEvenementDto } from './dto/create-evenement.dto';
 import { UpdateEvenementDto } from './dto/update-evenement.dto';
@@ -6,20 +6,28 @@ import { WebunaireService } from 'src/webunaire/webunaire.service';
 import { Roles } from 'src/auth/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { CategoryEvenementService } from 'src/category-evenement/category-evenement.service';
 
 @Controller('evenements')
 export class EvenementController {
    constructor(private readonly evenementService: EvenementService,
-     private readonly webuService: WebunaireService
+     private readonly webuService: WebunaireService,
+     private readonly categoryService: CategoryEvenementService
    ) {}
  
 
     @Roles('ADMIN')
      @UseGuards(AuthGuard('jwt'), RolesGuard)
    @Post()
-   create(@Body() createEvenementDto: CreateEvenementDto) {
-     return this.evenementService.create(createEvenementDto);
-   }
+   async create(@Body() createEvenementDto: CreateEvenementDto) {
+    // Vérifiez que la catégorie existe
+    const categoryExists = await this.categoryService.findOne(createEvenementDto.categoryId);
+    if (!categoryExists) {
+      throw new BadRequestException('La catégorie spécifiée n\'existe pas');
+    }
+    
+    return this.evenementService.create(createEvenementDto);
+  }
  
    @Get()
    findAll() {

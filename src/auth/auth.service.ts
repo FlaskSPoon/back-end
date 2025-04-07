@@ -192,7 +192,7 @@ export class AuthService {
     return { message: 'Utilisateur modifié avec succès', user: updatedUser };
   }
 
-  // Méthode pour supprimer un utilisateur
+
   async delete(userId: number) {
     const user = await this.database.user.findUnique({
       where: { id: userId },
@@ -210,7 +210,7 @@ export class AuthService {
     return { message: 'Utilisateur supprimé avec succès', user: deletedUser };
   }
 
-  // Méthode pour mettre à jour le rôle d'un utilisateur (uniquement par un admin)
+
   async updateRole(adminId: string, userId: string, newRole: string) {
     const admin = await this.database.user.findUnique({
       where: { id: Number(adminId) },

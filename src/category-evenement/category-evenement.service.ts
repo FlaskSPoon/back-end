@@ -30,13 +30,19 @@ export class CategoryEvenementService {
   }
 
  
-  async update(id: number, updateCategoryEvenementDto: UpdateCategoryEvenementDto):Promise<CategoryEvenement> {
-    const cateEv=await this.categoryEvenementRepository.findOne({where:{id}});
+  async update(id: number, updateCategoryEvenementDto: UpdateCategoryEvenementDto): Promise<CategoryEvenement> {
+    const cateEv = await this.categoryEvenementRepository.findOne({ where: { id } });
+    
+  
     if (!cateEv) {
       throw new NotFoundException(`Category Evenement avec l'ID ${id} non trouvé`);
     }
+  
+    Object.assign(cateEv, updateCategoryEvenementDto);
+  
     return await this.categoryEvenementRepository.save(cateEv);
   }
+  
 
   async remove(id: number):Promise<{message:string}> {
     const cateEv=await this.categoryEvenementRepository.findOne({where:{id}});

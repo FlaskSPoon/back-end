@@ -13,7 +13,11 @@ export class EvenementService {
   ) {}
 
   async create(createEvenementDto: CreateEvenementDto): Promise<Evenement> {
-    const evenement = this.evenementRepository.create(createEvenementDto);
+    const evenement = this.evenementRepository.create({
+      ...createEvenementDto,
+      category: { id: createEvenementDto.categoryId } 
+    });
+  
     return this.evenementRepository.save(evenement);
   }
 

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { ArticleStatut } from "@prisma/client";
+import { IsBoolean, IsDateString, IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateArticleDto{
 
@@ -22,8 +23,8 @@ export class CreateArticleDto{
   category: string;
 
   @ApiProperty()
-  @IsBoolean()
-  statut: boolean; 
+  @IsEnum(ArticleStatut)
+  statut: ArticleStatut; 
   
   @ApiProperty()
   @IsNumber()

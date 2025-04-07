@@ -1,6 +1,6 @@
 export  enum ArticleStatut {
-    BROUILLON,
-    PUBLIÉ,
-   ARCHIVÉS
+  BROUILLON = 'BROUILLON',
+  PUBLIÉ = 'PUBLIÉ',
+  ARCHIVÉS = 'ARCHIVÉS'
  }
  
