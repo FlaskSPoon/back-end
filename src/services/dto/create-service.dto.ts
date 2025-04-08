@@ -1,22 +1,32 @@
-import { IsDateString, IsDecimal, IsInt, IsOptional, IsString } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsDateString, IsDecimal, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class CreateServiceDto {
     @IsString()
     name: string;
   
     
+
+    @ApiProperty()
   @IsString()
   description: string;
 
-    @IsOptional()
-    @IsDecimal()
+
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
     price?: number;
   
+
+    @ApiProperty()
     @IsDateString()
     createdAt :string
+
+    @ApiProperty()
     @IsDateString()
     updatedAt :string
-    @IsOptional()
-    @IsInt() 
-    categoryId?: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+    categoryId: number;
 }

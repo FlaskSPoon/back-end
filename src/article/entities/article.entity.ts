@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsOptional } from "class-validator";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ArticleStatut } from "./enuArticle";
 
 @Entity('article')
@@ -31,7 +31,11 @@ export class Article  {
   @IsOptional()
   @IsEnum(ArticleStatut)
   statut?: ArticleStatut;
+  
 
+    @ApiProperty()
+    @UpdateDateColumn()
+    updatedAt: Date;
 
   @ApiProperty()
   @ManyToOne(() => User, (user) => user.articles , { onDelete: 'CASCADE'}) 

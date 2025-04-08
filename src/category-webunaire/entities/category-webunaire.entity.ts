@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Webinaire } from 'src/webunaire/entities/webunaire.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, UpdateDateColumn } from 'typeorm';
 
 @Entity('categorywebinaire')
 export class CategoryWebinaire {
@@ -17,6 +17,13 @@ export class CategoryWebinaire {
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+    
+  
+      @ApiProperty()
+      @UpdateDateColumn()
+      updatedAt: Date;
+
 
   @ApiProperty()
   @OneToMany(() => Webinaire, (webinaire) => webinaire.category)

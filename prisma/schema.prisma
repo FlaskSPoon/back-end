@@ -20,6 +20,8 @@ model User {
   email    String @unique
   password String
   username String
+   createdAt     DateTime     @default(now())
+  updatedAt   DateTime @updatedAt 
    roleId    Int
   role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
   articles  Article[]
@@ -38,6 +40,7 @@ model Article {
   description String?
   datePublication DateTime @default(now())
   statut      ArticleStatut @default(BROUILLON)
+  updatedAt   DateTime @updatedAt 
   category    String
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
@@ -49,7 +52,8 @@ model Evenement {
   id             Int              @id @default(autoincrement())
   title          String           
   description    String          
-  dateEvenement  DateTime         
+  dateEvenement  DateTime 
+  updatedAt   DateTime @updatedAt         
   categoryId     Int              
   category       CategoryEvenement @relation(fields: [categoryId], references: [id])
 }
@@ -58,7 +62,8 @@ model Webinaire {
   id             Int              @id @default(autoincrement())
   title          String           
   description    String           
-  dateWebinaire  DateTime         
+  dateWebinaire  DateTime 
+  updatedAt   DateTime @updatedAt         
   categoryId     Int              
   category       CategoryWebinaire @relation(fields: [categoryId], references: [id])
 }
@@ -67,7 +72,8 @@ model CategoryWebinaire {
   id          Int          @id @default(autoincrement())
   name        String       
   description String?      
-  createdAt   DateTime     @default(now())      
+   createdAt     DateTime     @default(now())
+  updatedAt   DateTime @updatedAt     
   Webinaires  Webinaire[]  
 }
 
@@ -75,7 +81,8 @@ model CategoryEvenement {
   id          Int          @id @default(autoincrement())
   name        String       
   description String?      
-  createdAt   DateTime     @default(now())     
+   createdAt     DateTime     @default(now())
+  updatedAt   DateTime @updatedAt     
   Evenements  Evenement[] 
 }
 
@@ -133,6 +140,8 @@ model Utilisateur {
   id          Int      @id @default(autoincrement())
   nom         String
   email       String
+   createdAt     DateTime     @default(now())
+  updatedAt   DateTime @updatedAt 
   partenaireId Int?
   partenaire   Partenaire? @relation(fields: [partenaireId], references: [id])
    ressources  Ressource[]
@@ -154,5 +163,6 @@ model Ressource {
 model NewsletterSubscriber {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  createdAt DateTime @default(now())
+ createdAt     DateTime     @default(now())
+  updatedAt   DateTime @updatedAt 
 }

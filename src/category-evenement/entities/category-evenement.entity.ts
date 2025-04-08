@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Evenement } from 'src/evenement/entities/evenement.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, UpdateDateColumn } from 'typeorm';
 
 
 @Entity('categoryevenement')
@@ -19,6 +19,12 @@ export class CategoryEvenement {
   @ApiProperty()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  
+
+    @ApiProperty()
+    @UpdateDateColumn()
+    updatedAt: Date;
 
   @ApiProperty()
   @OneToMany(() => Evenement, (evenement) => evenement.category)

@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 import { Partenaire } from "src/partenaire/entities/partenaire.entity";
 import { Ressource } from "src/ressource/entities/ressource.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('utilisateur')
 export class Utilisateur {
@@ -34,4 +34,13 @@ export class Utilisateur {
   @ApiProperty()
   @Column({ nullable: true })
   partenaireId?: number;
+
+    @ApiProperty()
+      @CreateDateColumn()
+      createdAt: Date;
+    
+  
+      @ApiProperty()
+      @UpdateDateColumn()
+      updatedAt: Date;
 }

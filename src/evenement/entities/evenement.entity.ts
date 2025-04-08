@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CategoryEvenement } from 'src/category-evenement/entities/category-evenement.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, UpdateDateColumn } from 'typeorm';
 
 
 @Entity()
@@ -20,6 +20,11 @@ export class Evenement {
   @Column()
   dateEvenement: Date;
 
+
+    @ApiProperty()
+    @UpdateDateColumn()
+    updatedAt: Date;
+    
   @ApiProperty()
   @ManyToOne(() => CategoryEvenement, (category) => category.Evenements)
   @JoinColumn({ name: 'categoryId' })

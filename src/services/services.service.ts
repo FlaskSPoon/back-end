@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,16 +10,32 @@ import { CategoryService } from 'src/category-services/entities/category-service
 export class ServicesService {
 
     constructor(@InjectRepository(Service)
-  private readonly serviceRepository: Repository<Service>)
+  private readonly serviceRepository: Repository<Service>,
+  @InjectRepository(CategoryService)
+  private readonly categoryServiceRepository: Repository<CategoryService>)
  {
   
     }
-  async create(createServiceDto: CreateServiceDto) {
-const services=await this.serviceRepository.create(createServiceDto);
-
-    return this.serviceRepository.save(services);
-  }
-
+    async create(createServiceDto: CreateServiceDto) {
+      // Vérification de la catégorie
+      const category = await this.categoryServiceRepository.findOneBy({ 
+        id: createServiceDto.categoryId 
+      });
+    
+      if (!category) {
+        throw new NotFoundException(`Category with ID ${createServiceDto.categoryId} not found`);
+      }
+    
+      // Création avec mapping explicite
+      const service = new Service();
+      service.name = createServiceDto.name;
+      service.description = createServiceDto.description;
+      service.price = Number(createServiceDto.price);
+      service.createdAt = createServiceDto.createdAt ? new Date(createServiceDto.createdAt) : new Date();
+      service.category = category;
+    
+      return this.serviceRepository.save(service);
+    }
   
 
   async findAll():Promise<Service[]> {
