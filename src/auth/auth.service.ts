@@ -23,8 +23,7 @@ export class AuthService {
     private readonly database: DatabaseService, 
     private readonly jwtService: JwtService,    
   ) {}
-
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(loginDto: LoginDto): Promise<{ access_token: string, user: any }> {
     if (!loginDto.email?.trim() || !loginDto.password?.trim()) {
       throw new BadRequestException('Email et mot de passe requis');
     }
@@ -46,8 +45,45 @@ export class AuthService {
       throw new UnauthorizedException('Identifiants invalides');
     }
   
-    return this.generateToken(user.id.toString(), user.role.name);
+    const payload = { userId: user.id.toString(), role: user.role.name };
+  
+    const token = this.jwtService.sign(payload);
+  
+    return {
+      access_token: token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role.name,
+      },
+    };
   }
+  
+  // async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  //   if (!loginDto.email?.trim() || !loginDto.password?.trim()) {
+  //     throw new BadRequestException('Email et mot de passe requis');
+  //   }
+  
+  //   const user = await this.database.user.findUnique({
+  //     where: { email: loginDto.email.trim() },
+  //     include: { role: true },
+  //   }).catch(error => {
+  //     console.error('Erreur DB:', error);
+  //     throw new InternalServerErrorException('Erreur de connexion');
+  //   });
+  
+  //   if (!user) {
+  //     throw new UnauthorizedException('Identifiants invalides');
+  //   }
+  
+  //   const passwordValid = await this.comparePassword(loginDto.password, user.password);
+  //   if (!passwordValid) {
+  //     throw new UnauthorizedException('Identifiants invalides');
+  //   }
+  
+  //   return this.generateToken(user.id.toString(), user.role.name);
+  // }
   async register(createUserDto: CreateUserDto): Promise<{ access_token: string }> {
     const { email, username, password, role } = createUserDto;
 
