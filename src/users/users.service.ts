@@ -48,4 +48,10 @@ export class UserService {
   async remove(id: number) {
     return await this.database.user.delete({ where: { id } });
   }
+
+  async logout(ctx:any){
+ await ctx.req.session.destroy(err=>{
+  return false;
+})
+  }
 }

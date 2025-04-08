@@ -29,6 +29,7 @@ import { RolesGuard } from './roles.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from './login.dto';
+import { LocalAuthGuard } from './local-auth.guard';
 
 class AuthBody {
   email: string;
@@ -92,6 +93,13 @@ export class AuthController {
     }
   }
   
+  @UseGuards(JwtAuthGuard) // Le token JWT doit être fourni
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Request() req) {
+    return { message: 'Déconnexion réussie ' };
+  }
+
   @ApiBearerAuth()
   @ApiOkResponse({ type: [User] })
   @Roles('ADMIN')

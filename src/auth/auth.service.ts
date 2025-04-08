@@ -23,11 +23,15 @@ export class AuthService {
     private readonly database: DatabaseService, 
     private readonly jwtService: JwtService,    
   ) {}
+
+  
   async login(loginDto: LoginDto): Promise<{ access_token: string, user: any }> {
+
+    //Vérification des données d'entrée
     if (!loginDto.email?.trim() || !loginDto.password?.trim()) {
       throw new BadRequestException('Email et mot de passe requis');
     }
-  
+  //Recherche de l'utilisateur dans la base de données
     const user = await this.database.user.findUnique({
       where: { email: loginDto.email.trim() },
       include: { role: true },
@@ -36,19 +40,25 @@ export class AuthService {
       throw new InternalServerErrorException('Erreur de connexion');
     });
   
+
+    // Vérification si l'utilisateur existe
     if (!user) {
       throw new UnauthorizedException('Identifiants invalides');
     }
   
+    //Vérification du mot de passe
     const passwordValid = await this.comparePassword(loginDto.password, user.password);
     if (!passwordValid) {
       throw new UnauthorizedException('Identifiants invalides');
     }
   
+    //Création du token JWT
     const payload = { userId: user.id.toString(), role: user.role.name };
   
     const token = this.jwtService.sign(payload);
   
+
+    //Retourner le token et les informations de l'utilisateur
     return {
       access_token: token,
       user: {
@@ -60,30 +70,7 @@ export class AuthService {
     };
   }
   
-  // async login(loginDto: LoginDto): Promise<{ access_token: string }> {
-  //   if (!loginDto.email?.trim() || !loginDto.password?.trim()) {
-  //     throw new BadRequestException('Email et mot de passe requis');
-  //   }
   
-  //   const user = await this.database.user.findUnique({
-  //     where: { email: loginDto.email.trim() },
-  //     include: { role: true },
-  //   }).catch(error => {
-  //     console.error('Erreur DB:', error);
-  //     throw new InternalServerErrorException('Erreur de connexion');
-  //   });
-  
-  //   if (!user) {
-  //     throw new UnauthorizedException('Identifiants invalides');
-  //   }
-  
-  //   const passwordValid = await this.comparePassword(loginDto.password, user.password);
-  //   if (!passwordValid) {
-  //     throw new UnauthorizedException('Identifiants invalides');
-  //   }
-  
-  //   return this.generateToken(user.id.toString(), user.role.name);
-  // }
   async register(createUserDto: CreateUserDto): Promise<{ access_token: string }> {
     const { email, username, password, role } = createUserDto;
 
@@ -163,37 +150,6 @@ export class AuthService {
   }
 
  
-  // async login(createUserDto: CreateUserDto): Promise<{ access_token: string }> {
-  //   const { email,  password } = createUserDto;
-  //      console.log(createUserDto)
-  //   if (!email) {
-  //     throw new BadRequestException('Email is required');
-  //   }
-  //   if (!password) {
-  //     throw new BadRequestException('Password is required');
-  //   }
-
-   
-  //   const user = await this.database.user.findUnique({
-     
-  //     where: { email: createUserDto.email },
-  //     include: { role: true },
-  //   }).catch((error) => {
-  //     throw new InternalServerErrorException('Authentication failed');
-  //   });
-  //   if (!user) {
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
-
-  //   const passwordValid = await this.comparePassword(createUserDto.password, user.password);
-  //   if (!passwordValid) {
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
-
-  
-  //   return this.generateToken(user.id.toString(), user.role.name);
-  // }
-
   async update(userId: number, updateData: Partial<{ email: string; username: string; roleId: number }>) {
     const user = await this.database.user.findUnique({
       where: { id: userId },
@@ -285,3 +241,34 @@ export class AuthService {
     return { message: `Rôle de l'utilisateur ID ${userId} mis à jour en ${newRole}` };
   }
 }
+
+
+
+
+// async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  //   if (!loginDto.email?.trim() || !loginDto.password?.trim()) {
+  //     throw new BadRequestException('Email et mot de passe requis');
+  //   }
+  
+  //   const user = await this.database.user.findUnique({
+  //     where: { email: loginDto.email.trim() },
+  //     include: { role: true },
+  //   }).catch(error => {
+  //     console.error('Erreur DB:', error);
+  //     throw new InternalServerErrorException('Erreur de connexion');
+  //   });
+  
+  //   if (!user) {
+  //     throw new UnauthorizedException('Identifiants invalides');
+  //   }
+  
+  //   const passwordValid = await this.comparePassword(loginDto.password, user.password);
+  //   if (!passwordValid) {
+  //     throw new UnauthorizedException('Identifiants invalides');
+  //   }
+  
+  //   return this.generateToken(user.id.toString(), user.role.name);
+  // }
+
+
+
