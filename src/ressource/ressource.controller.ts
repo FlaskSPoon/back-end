@@ -32,7 +32,7 @@ export class RessourceController {
 
   @Roles('ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id') id: number,
     @Body() updateRessourceDto: UpdateRessourceDto,
