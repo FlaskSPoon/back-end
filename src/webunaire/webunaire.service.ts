@@ -1,20 +1,45 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateWebunaireDto } from './dto/update-webunaire.dto';
 import { CreateWebinaireDto } from './dto/create-webunaire.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Webinaire } from './entities/webunaire.entity';
 import { Repository } from 'typeorm';
+import { CategoryWebinaire } from 'src/category-webunaire/entities/category-webunaire.entity';
 
 @Injectable()
 export class WebunaireService {
   constructor(
     @InjectRepository(Webinaire)
     private readonly webinaireRepository: Repository<Webinaire>,
+    @InjectRepository(CategoryWebinaire)
+    private readonly categoryWebinaireRepository: Repository<CategoryWebinaire>,
   ) {}
 
   async create(createWebinaireDto: CreateWebinaireDto): Promise<Webinaire> {
-    const webinaire = this.webinaireRepository.create(createWebinaireDto);
-    return this.webinaireRepository.save(webinaire);
+    console.log('DTO reçu:', createWebinaireDto); // Debug
+  
+    const category = await this.categoryWebinaireRepository.findOneBy({ 
+      id: createWebinaireDto.categoryId 
+    });
+  
+    if (!category) {
+      console.log(`Catégorie ${createWebinaireDto.categoryId} introuvable`);
+      throw new NotFoundException(`Category ${createWebinaireDto.categoryId} not found`);
+    }
+  
+    try {
+      const webinaire = this.webinaireRepository.create({
+        title: createWebinaireDto.title,
+        description: createWebinaireDto.description,
+        dateWebinaire: new Date(createWebinaireDto.dateWebinaire), // Conversion explicite
+        category: { id: createWebinaireDto.categoryId }
+      });
+      
+      return await this.webinaireRepository.save(webinaire);
+    } catch (error) {
+      console.error('Erreur SQL:', error);
+      throw new BadRequestException('Validation failed');
+    }
   }
 
   async findAll(): Promise<Webinaire[]> {

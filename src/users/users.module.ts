@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { UserService } from './users.service';
 import { UserController} from './users.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -10,6 +10,9 @@ import { RoleModule } from 'src/role/role.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
+
+
+@Global()
 @Module({
   
   imports: [PrismaModule,TypeOrmModule.forFeature([User]),RoleModule], 

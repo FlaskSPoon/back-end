@@ -5,7 +5,7 @@ import { UpdateNewlettreSubscribeDto } from './dto/update-newlettre-subscribe.dt
 import { ApiTags } from '@nestjs/swagger';
 import { NewlettreSubscribe } from './entities/newlettre-subscribe.entity';
 
-@Controller('newlettre-subscribe')
+@Controller('newlettre')
 @ApiTags('newlettre')
 export class NewlettreSubscribeController {
   constructor(private readonly newlettreSubscribeService: NewlettreSubscribeService) {}

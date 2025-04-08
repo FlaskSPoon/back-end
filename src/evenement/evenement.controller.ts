@@ -16,18 +16,13 @@ export class EvenementController {
    ) {}
  
 
-    @Roles('ADMIN')
-     @UseGuards(AuthGuard('jwt'), RolesGuard)
    @Post()
+   @Roles('ADMIN')
+   @UseGuards(AuthGuard('jwt'), RolesGuard)
    async create(@Body() createEvenementDto: CreateEvenementDto) {
-    // Vérifiez que la catégorie existe
-    const categoryExists = await this.categoryService.findOne(createEvenementDto.categoryId);
-    if (!categoryExists) {
-      throw new BadRequestException('La catégorie spécifiée n\'existe pas');
-    }
-    
-    return this.evenementService.create(createEvenementDto);
-  }
+     // La vérification est maintenant dans le service
+     return this.evenementService.create(createEvenementDto);
+   }
  
    @Get()
    findAll() {

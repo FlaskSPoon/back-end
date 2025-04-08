@@ -1,26 +1,45 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEvenementDto } from './dto/create-evenement.dto';
 import { UpdateEvenementDto } from './dto/update-evenement.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Evenement } from './entities/evenement.entity';
 import { Repository } from 'typeorm';
+import { CategoryEvenement } from 'src/category-evenement/entities/category-evenement.entity';
 
 @Injectable()
 export class EvenementService {
   constructor(
     @InjectRepository(Evenement)
     private evenementRepository: Repository<Evenement>,
+    @InjectRepository(CategoryEvenement)
+    private categoryRepository: Repository<CategoryEvenement> 
+    
   ) {}
 
   async create(createEvenementDto: CreateEvenementDto): Promise<Evenement> {
+    const category = await this.categoryRepository.findOne({ 
+      where: { id: createEvenementDto.categoryId },
+      select: ['id'] 
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${createEvenementDto.categoryId} not found`);
+    }
+
     const evenement = this.evenementRepository.create({
       ...createEvenementDto,
-      category: { id: createEvenementDto.categoryId } 
+      category: category 
     });
-  
-    return this.evenementRepository.save(evenement);
-  }
 
+    try {
+      return await this.evenementRepository.save(evenement);
+    } catch (error) {
+      if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+        throw new BadRequestException('Invalid category ID');
+      }
+      throw error;
+    }
+  }
   async findAll(): Promise<Evenement[]> {
     return this.evenementRepository.find();
   }
