@@ -1,0 +1,65 @@
+[33mcommit 6190f31b54abc90641d4e7231184de1613492a61[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbalde-backend[m[33m, [m[1;31morigin/balde-backend[m[33m)[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Thu Mar 27 00:38:05 2025 -1200
+
+    .env
+
+[33mcommit e549f9526444e9669b915bd71a8942b8d4be0e24[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Wed Mar 26 22:34:12 2025 -1200
+
+    paramettre Railway ajouter
+
+[33mcommit 9fad0343d2c5aee4af36f29c9f2c588609e4a2a0[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Wed Mar 26 21:53:34 2025 -1200
+
+    fix database connection
+
+[33mcommit c081d02c5eb389229bb95056ae246a07fafca1c4[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Sat Mar 22 02:10:48 2025 -1200
+
+    methode update and delete updated
+
+[33mcommit b310b2279af07bcc15ad2a0040228d96dcd7ed07[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Fri Mar 21 06:10:17 2025 -1200
+
+    API Complete
+
+[33mcommit a737e1d2e0b5fad0b12167d132faf960b864f679[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Wed Mar 19 04:59:10 2025 -1200
+
+    API- ARTICLE
+
+[33mcommit f494ceb0334aca1d86a6c8f0360e0e526563b20b[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Tue Mar 18 21:13:06 2025 -1200
+
+    API ARTICLE IS OK
+
+[33mcommit af10e0f7b2bb91ffa8a433100a27b6ccbd3b3e65[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Tue Mar 18 05:52:57 2025 -1200
+
+    api-article
+
+[33mcommit a65451c3b1b7a8e6a3a84d556f78d5bbce14d63d[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Sun Mar 16 21:59:12 2025 -1200
+
+    fisrt commit to backend
+
+[33mcommit 8eba08fed357f830ed2df200396e850dabd7c1b3[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Sat Mar 15 03:01:52 2025 -1200
+
+    fisrt-commit
+
+[33mcommit 3f0d60e6388d72064558af970bc8c39f90ecdaa2[m
+Author: Seny BALDE <seny.balde1@unchk.edu.sn>
+Date:   Thu Mar 13 03:07:12 2025 -1200
+
+    API-USER is ok
