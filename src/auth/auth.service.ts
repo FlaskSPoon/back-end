@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // auth.service.ts
 import {
   Injectable,
@@ -16,42 +20,62 @@ import { User } from 'src/users/entities/user.entity';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from './login.dto';
 
-
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly database: DatabaseService, 
-    private readonly jwtService: JwtService,    
+    private readonly database: DatabaseService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ access_token: string; user: any }> {
     if (!loginDto.email?.trim() || !loginDto.password?.trim()) {
       throw new BadRequestException('Email et mot de passe requis');
     }
-  
-    const user = await this.database.user.findUnique({
-      where: { email: loginDto.email.trim() },
-      include: { role: true },
-    }).catch(error => {
-      console.error('Erreur DB:', error);
-      throw new InternalServerErrorException('Erreur de connexion');
-    });
-  
+
+    const user = await this.database.user
+      .findUnique({
+        where: { email: loginDto.email.trim() },
+        include: { role: true },
+      })
+      .catch((error) => {
+        console.error('Erreur DB:', error);
+        throw new InternalServerErrorException('Erreur de connexion');
+      });
+
     if (!user) {
-      throw new UnauthorizedException('Identifiants invalides');
+      throw new UnauthorizedException('Email ou mot de passe incorrect');
     }
-  
-    const passwordValid = await this.comparePassword(loginDto.password, user.password);
+
+    const passwordValid = await this.comparePassword(
+      loginDto.password,
+      user.password,
+    );
     if (!passwordValid) {
-      throw new UnauthorizedException('Identifiants invalides');
+      throw new UnauthorizedException('Email ou mot de passe incorrect');
     }
-  
-    return this.generateToken(user.id.toString(), user.role.name);
+
+    // Générer le token
+    const token = this.generateToken(user.id.toString(), user.role.name);
+
+    // Retourner le token et les données de l'utilisateur
+    return {
+      access_token: token.access_token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role.name,
+      },
+    };
   }
-  async register(createUserDto: CreateUserDto): Promise<{ access_token: string }> {
+
+  async register(
+    createUserDto: CreateUserDto,
+  ): Promise<{ access_token: string }> {
     const { email, username, password, role } = createUserDto;
 
-   
     if (!email) {
       throw new BadRequestException('Email is required');
     }
@@ -59,22 +83,20 @@ export class AuthService {
       throw new BadRequestException('Password is required');
     }
 
-    
     const existingUser = await this.database.user.findUnique({
       where: { email },
     });
 
     if (existingUser) {
-      throw new ConflictException('Un compte existe déjà avec cette adresse email');
+      throw new ConflictException(
+        'Un compte existe déjà avec cette adresse email',
+      );
     }
 
-   
     const hashedPassword = await this.hashPassword(password);
 
-   
     const roleToConnect = await this.validateRole(role);
 
-   
     const user = await this.database.user.create({
       data: {
         email,
@@ -86,16 +108,13 @@ export class AuthService {
       },
     });
 
-
     return this.generateToken(user.id.toString(), roleToConnect.name);
   }
 
- 
   private async validateRole(roleName: string) {
     if (!roleName) {
       throw new Error('Role name is required');
     }
-
 
     const role = await this.database.role.findUnique({
       where: { name: roleName },
@@ -108,25 +127,27 @@ export class AuthService {
     return role;
   }
 
-  
   private async hashPassword(password: string): Promise<string> {
     return hash(password, 10);
   }
 
- 
-  private async comparePassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
+  private async comparePassword(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     return compare(plainTextPassword, hashedPassword);
   }
 
- 
-  private async generateToken(userId: string, role: string): Promise<{ access_token: string }> {
+  private generateToken(
+    userId: string,
+    role: string,
+  ): { access_token: string } {
     const payload = { userId, role };
     return {
-      access_token: this.jwtService.sign(payload), 
+      access_token: this.jwtService.sign(payload),
     };
   }
 
- 
   // async login(createUserDto: CreateUserDto): Promise<{ access_token: string }> {
   //   const { email,  password } = createUserDto;
   //      console.log(createUserDto)
@@ -137,9 +158,8 @@ export class AuthService {
   //     throw new BadRequestException('Password is required');
   //   }
 
-   
   //   const user = await this.database.user.findUnique({
-     
+
   //     where: { email: createUserDto.email },
   //     include: { role: true },
   //   }).catch((error) => {
@@ -154,11 +174,13 @@ export class AuthService {
   //     throw new UnauthorizedException('Invalid credentials');
   //   }
 
-  
   //   return this.generateToken(user.id.toString(), user.role.name);
   // }
 
-  async update(userId: number, updateData: Partial<{ email: string; username: string; roleId: number }>) {
+  async update(
+    userId: number,
+    updateData: Partial<{ email: string; username: string; roleId: number }>,
+  ) {
     const user = await this.database.user.findUnique({
       where: { id: userId },
     });
@@ -178,7 +200,9 @@ export class AuthService {
       });
 
       if (!role) {
-        throw new NotFoundException(`Le rôle avec ID ${updateData.roleId} n'existe pas`);
+        throw new NotFoundException(
+          `Le rôle avec ID ${updateData.roleId} n'existe pas`,
+        );
       }
 
       dataToUpdate.role = { connect: { id: updateData.roleId } };
@@ -218,11 +242,15 @@ export class AuthService {
     });
 
     if (!admin || admin.role.name !== 'ADMIN') {
-      throw new ForbiddenException("Seuls les administrateurs peuvent modifier les rôles");
+      throw new ForbiddenException(
+        'Seuls les administrateurs peuvent modifier les rôles',
+      );
     }
 
     if (Number(adminId) === Number(userId)) {
-      throw new ForbiddenException("Vous ne pouvez pas modifier votre propre rôle");
+      throw new ForbiddenException(
+        'Vous ne pouvez pas modifier votre propre rôle',
+      );
     }
 
     const user = await this.database.user.findUnique({
@@ -230,7 +258,9 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException(`L'utilisateur avec ID ${userId} n'existe pas`);
+      throw new NotFoundException(
+        `L'utilisateur avec ID ${userId} n'existe pas`,
+      );
     }
 
     const role = await this.database.role.findUnique({
@@ -246,6 +276,12 @@ export class AuthService {
       data: { role: { connect: { id: role.id } } },
     });
 
-    return { message: `Rôle de l'utilisateur ID ${userId} mis à jour en ${newRole}` };
+    return {
+      message: `Rôle de l'utilisateur ID ${userId} mis à jour en ${newRole}`,
+    };
+  }
+
+  async logout(): Promise<{ message: string }> {
+    return { message: 'Déconnexion réussie' };
   }
 }
