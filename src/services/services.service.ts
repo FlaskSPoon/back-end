@@ -1,10 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Put, UseGuards } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Service } from './entities/service.entity';
 import { Repository } from 'typeorm';
 import { CategoryService } from 'src/category-services/entities/category-service.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Injectable()
 export class ServicesService {
@@ -72,4 +74,20 @@ export class ServicesService {
     await this.serviceRepository.remove(service);
     return { message: `Le service avec l'ID ${id} a été supprimé avec succès` };
   }
+
+  async updateFull(name: string, updateServiceDto: UpdateServiceDto): Promise<Service> {
+    const service = await this.serviceRepository.findOne({ where: { name } });
+  
+    if (!service) {
+      throw new NotFoundException(`Service avec le nom "${name}" non trouvé`);
+    }
+  
+    // On met à jour les propriétés
+    Object.assign(service, updateServiceDto);
+  
+    return await this.serviceRepository.save(service);
+  }
+ 
+  
+
 }

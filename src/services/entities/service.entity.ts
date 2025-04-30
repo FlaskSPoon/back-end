@@ -30,7 +30,7 @@ export class Service {
 
       
     
-        @ApiProperty()
-        @UpdateDateColumn()
-        updatedAt: Date;
+        // @ApiProperty()
+        // @UpdateDateColumn()
+        // updatedAt: Date;
 }

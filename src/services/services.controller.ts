@@ -12,7 +12,7 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Post()
-    @Roles('ADMIN')
+    @Roles('ROLE_ADMIN')
        @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(@Body() createServiceDto: CreateServiceDto) {
     return this.servicesService.create(createServiceDto);
@@ -30,21 +30,28 @@ export class ServicesController {
 
   
 
-  @Patch(':id')
-  @Roles('ADMIN')
+  @Put(':id')
+  @Roles('ROLE_ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async update(
-    @Param('id') id: string,
-    @Body() updateServiceDto: UpdateServiceDto,
+  async update(@Param('id') id: string,@Body() updateServiceDto: UpdateServiceDto,
   ) {
     return await this.servicesService.update(+id, updateServiceDto);
   }
 
   @Delete(':id')
-
-  @Roles('ADMIN')
+  @Roles('ROLE_ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   async remove(@Param('id') id: string): Promise<{ message: string }> {
     return await this.servicesService.remove(+id);
   }
+
+  // @Put('update-by-name/:name')
+  // @Roles('ROLE_ADMIN')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // async updateFull(
+  //   @Param('name') name: string,
+  //   @Body() updateServiceDto: UpdateServiceDto,
+  // ) {
+  //   return await this.servicesService.updateFull(name, updateServiceDto);
+  // }
 }

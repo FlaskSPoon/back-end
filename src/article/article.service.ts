@@ -21,7 +21,7 @@ export class ArticleService {
   ) {}
 
   async create(createArticleDto: CreateArticleDto): Promise<Article> {
-    const { userId, titre, description, datePublication,category, statut } = createArticleDto;
+    const { userId, titre, description, datePublication,categoryId, statut } = createArticleDto;
 
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -36,9 +36,10 @@ export class ArticleService {
       titre,
       description,
       datePublication,
-      category,
       statut:ArticleStatut.PUBLIÉ,
-      user, 
+      user,
+      category:{id:categoryId} 
+      
     });
 
     return  this.articleRepository.save(article);

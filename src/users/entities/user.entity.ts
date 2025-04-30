@@ -1,9 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { ROLE } from "@prisma/client";
 import { Article } from "src/article/entities/article.entity";
-import { Role } from "src/role/entities/role.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+
 @Entity()
-export class User implements User {
+export class User {
       @PrimaryGeneratedColumn()
     id:number;
 
@@ -15,18 +16,18 @@ export class User implements User {
 
     @ApiProperty()
     password: string;
+    
+    @ApiProperty()
+    @Column()
+    status: string;
 
    @ApiProperty()
   @Column()
-  roleId: number;
+  role: ROLE;
 
-
-  @ApiProperty()
-  @ManyToOne(() => Role, (role) => role.users, { onDelete: "CASCADE" })
-  role: ()=>Role;
 
 
   @ApiProperty()
   @OneToMany(() => Article, (article) => article.user)
-  articles: Article[];
+  articles?: Article[];
 }

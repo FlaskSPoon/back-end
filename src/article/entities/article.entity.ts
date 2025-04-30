@@ -3,6 +3,8 @@ import { IsEnum, IsOptional } from "class-validator";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ArticleStatut } from "./enuArticle";
+import { CategoryArticle } from "@prisma/client";
+import { CategorieArticle } from "src/categorie-article/entities/categorie-article.entity";
 
 @Entity('article')
 export class Article  {
@@ -22,25 +24,21 @@ export class Article  {
   @Column()
   readonly datePublication: Date;
   
-  @ApiProperty() 
-  @Column()
-  category: string;
-  
+  @ApiProperty()
+  @ManyToOne(() => CategorieArticle, (category) => category.articles, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'category_id' })
+  readonly category: CategoryArticle;
 
  @Column({ type: 'enum', enum: ArticleStatut, default: ArticleStatut.BROUILLON })
   @IsOptional()
   @IsEnum(ArticleStatut)
-  statut?: ArticleStatut;
+  readonly statut?: ArticleStatut;
   
-
-    @ApiProperty()
-    @UpdateDateColumn()
-    updatedAt: Date;
 
   @ApiProperty()
   @ManyToOne(() => User, (user) => user.articles , { onDelete: 'CASCADE'}) 
   @JoinColumn({ name: 'user_id' }) 
-  user: User;
+  readonly user: User;
 
 
 }

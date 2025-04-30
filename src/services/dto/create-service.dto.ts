@@ -14,19 +14,22 @@ export class CreateServiceDto {
 
   @ApiProperty()
   @IsNumber()
+  @IsOptional()
   @IsPositive()
     price?: number;
   
 
     @ApiProperty()
+    @IsOptional()
     @IsDateString()
     createdAt :string
 
-    @ApiProperty()
-    @IsDateString()
-    updatedAt :string
+    // @ApiProperty()
+    // @IsDateString()
+    // updatedAt :string
 
   @ApiProperty()
+  @IsOptional()
   @IsNotEmpty()
-    categoryId: number;
+  categoryId: number;
 }

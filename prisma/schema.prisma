@@ -9,10 +9,10 @@ datasource db {
 }
 
 
-model Role {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-   users User[]
+enum ROLE {
+  ROLE_ADMIN 
+  ROLE_USER
+  ROLE_NONE
 }
 
 model User {
@@ -20,10 +20,10 @@ model User {
   email    String @unique
   password String
   username String
-   createdAt     DateTime     @default(now())
+  status String @default("Approved")
+  createdAt     DateTime     @default(now())
   updatedAt   DateTime @updatedAt 
-   roleId    Int
-  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  role      ROLE    
   articles  Article[]
 }
 
@@ -41,12 +41,19 @@ model Article {
   datePublication DateTime @default(now())
   statut      ArticleStatut @default(BROUILLON)
   updatedAt   DateTime @updatedAt 
-  category    String
+  categoryId      Int
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
+   category      CategoryArticle @relation(fields: [categoryId], references: [id]) 
 }
 
-
+model CategoryArticle {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+   updatedAt   DateTime @updatedAt 
+  article  Article[] 
+}
 
 model Evenement {
   id             Int              @id @default(autoincrement())

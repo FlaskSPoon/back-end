@@ -38,6 +38,7 @@ import { Ressource } from './ressource/entities/ressource.entity';
 import { Partenaire } from './partenaire/entities/partenaire.entity';
 import { NewlettreSubscribe } from './newlettre-subscribe/entities/newlettre-subscribe.entity';
 import { CategoryService } from './category-services/entities/category-service.entity';
+import { CategorieArticleModule } from './categorie-article/categorie-article.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { CategoryService } from './category-services/entities/category-service.e
     UtilisateurModule,
     RessourceModule,
     NewlettreSubscribeModule,
+    CategorieArticleModule,
   ],
   controllers: [UserController],
   providers: [

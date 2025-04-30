@@ -1,19 +1,13 @@
 -- CreateTable
-CREATE TABLE `Role` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
-
-    UNIQUE INDEX `Role_name_key`(`name`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `username` VARCHAR(191) NOT NULL,
-    `roleId` INTEGER NOT NULL,
+    `status` VARCHAR(191) NOT NULL DEFAULT 'Approved',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `role` ENUM('ROLE_ADMIN', 'ROLE_USER', 'ROLE_NONE') NOT NULL,
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -26,9 +20,21 @@ CREATE TABLE `Article` (
     `description` VARCHAR(191) NULL,
     `datePublication` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `statut` ENUM('BROUILLON', 'PUBLIÉ', 'ARCHIVÉS') NOT NULL DEFAULT 'BROUILLON',
-    `category` VARCHAR(191) NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL,
+    `categoryId` INTEGER NOT NULL,
     `userId` INTEGER NOT NULL,
 
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CategoryArticle` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `CategoryArticle_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -38,6 +44,7 @@ CREATE TABLE `Evenement` (
     `title` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
     `dateEvenement` DATETIME(3) NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL,
     `categoryId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -49,6 +56,7 @@ CREATE TABLE `Webinaire` (
     `title` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
     `dateWebinaire` DATETIME(3) NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL,
     `categoryId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -60,6 +68,7 @@ CREATE TABLE `CategoryWebinaire` (
     `name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -70,6 +79,7 @@ CREATE TABLE `CategoryEvenement` (
     `name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -130,6 +140,8 @@ CREATE TABLE `Utilisateur` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nom` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
     `partenaireId` INTEGER NULL,
 
     PRIMARY KEY (`id`)
@@ -154,16 +166,17 @@ CREATE TABLE `NewsletterSubscriber` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `NewsletterSubscriber_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `User` ADD CONSTRAINT `User_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Role`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Article` ADD CONSTRAINT `Article_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Article` ADD CONSTRAINT `Article_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Article` ADD CONSTRAINT `Article_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `CategoryArticle`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Evenement` ADD CONSTRAINT `Evenement_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `CategoryEvenement`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

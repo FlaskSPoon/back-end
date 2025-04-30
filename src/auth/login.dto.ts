@@ -6,8 +6,9 @@ export class LoginDto {
     @IsEmail({}, { message: 'Doit être une adresse email valide' })
     @IsNotEmpty({ message: 'Email requis' })
     email: string;
+
   
-    @ApiProperty({ example: 'votreMotDePasse' })
+    @ApiProperty({ example: 'votre Mot DePasse' })
     @IsString({ message: 'Doit être une chaîne de caractères' })
     @IsNotEmpty({ message: 'Mot de passe requis' })
     password: string;

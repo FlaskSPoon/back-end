@@ -18,6 +18,7 @@ import {
   UnauthorizedException,
   InternalServerErrorException,
   BadRequestException,
+  Header,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/users/users.service';
@@ -51,38 +52,47 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  @Post('login')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Connexion utilisateur' })
-  @ApiBody({ type: LoginDto })
-  @ApiOkResponse({ description: 'Connexion réussie' })
-  @ApiBadRequestResponse({ description: 'Données invalides' })
-  @ApiUnauthorizedResponse({ description: 'Identifiants incorrects' })
-  @UsePipes(new ValidationPipe({ 
-    transform: true,
-    whitelist: true,
-    exceptionFactory: (errors) => {
-      const messages = errors.map(error => {
+
+//   @Header('Access-Control-Allow-Origin', 'http://localhost:3000') 
+// @Header('Access-Control-Allow-Credentials', 'true')
+//   @Post('login')
+//   @HttpCode(HttpStatus.OK)
+//   @ApiOperation({ summary: 'Connexion utilisateur' })
+//   @ApiBody({ type: LoginDto })
+//   @ApiOkResponse({ description: 'Connexion réussie' })
+//   @ApiBadRequestResponse({ description: 'Données invalides' })
+//   @ApiUnauthorizedResponse({ description: 'Identifiants incorrects' })
+//   @UsePipes(new ValidationPipe({ 
+//     transform: true,
+//     whitelist: true,
+//     exceptionFactory: (errors) => {
+//       const messages = errors.map(error => {
        
-        if (!error.constraints) {
-          return `${error.property} a une erreur de validation`;
-        }
-        return Object.values(error.constraints).join(', ');
-      });
+//         if (!error.constraints) {
+//           return `${error.property} a une erreur de validation`;
+//         }
+//         return Object.values(error.constraints).join(', ');
+//       });
       
-      return new BadRequestException({
-        statusCode: 400,
-        message: 'Erreur de validation',
-        errors: messages,
-        timestamp: new Date().toISOString()
-      });
-    }
-  }))
+//       return new BadRequestException({
+//         statusCode: 400,
+//         message: 'Erreur de validation',
+//         errors: messages,
+//         timestamp: new Date().toISOString()
+//       });
+//     }
+//   }))
+
+
+  @Post('/login')
   async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+    console.log('Login reçu :', loginDto);
+    return await this.authService.login(loginDto);
   }
 
-  @Post('register')
+
+  @Roles('ROLE_ADMIN')
+  @Post('/register')
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: CreateUserDto) {
@@ -93,43 +103,44 @@ export class AuthController {
     }
   }
   
-  @UseGuards(JwtAuthGuard) // Le token JWT doit être fourni
+  @UseGuards(JwtAuthGuard) 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Request() req) {
-    return { message: 'Déconnexion réussie ' };
+    return await { message: 'Déconnexion réussie ' };
   }
 
   @ApiBearerAuth()
   @ApiOkResponse({ type: [User] })
-  @Roles('ADMIN')
+  @Roles('ROLE_ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)  
   @Get('users')
   async getUsers() {
     return await this.userService.getUsers();
   }
 
-  @Put(':id')
-  @Roles('ADMIN')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @ApiBearerAuth()
-  @ApiOkResponse({ type: User })
-  async update(
-    @Param('id') userId: string,
-    @Body() updateData: Partial<{ email: string; username: string; roleId: number }>,
-  ) {
-    try {
-      return await this.authService.update(Number(userId), updateData);
-    } catch (error) {
-      throw new NotFoundException(error.message);
-    }
-  }
+
+  // @Roles('ROLE_ADMIN')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @ApiBearerAuth()
+  // @ApiOkResponse({ type: User })
+  //   @Put(':id')
+  // async update(
+  //   @Param('id') userId: string,
+  //   @Body() updateData: Partial<{ email: string; username: string; roleId: number }>,
+  // ) {
+  //   try {
+  //     return await this.authService.update(Number(userId), updateData);
+  //   } catch (error) {
+  //     throw new NotFoundException(error.message);
+  //   }
+  // }
 
   @Delete(':userId')
   @ApiBearerAuth()
   @ApiOkResponse({ type: User })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ROLE_ADMIN')
   async deleteUser(@Param('userId') userId: string) {
     try {
       return await this.authService.delete(Number(userId));
@@ -139,8 +150,8 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  @Patch(':id/role')
-@Roles('ADMIN') 
+  @Patch(':id')
+@Roles('ROLE_ADMIN') 
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 async updateUserRole(
   @Request() req, 
@@ -150,4 +161,17 @@ async updateUserRole(
   return this.authService.updateRole(req.user.userId, Number(userId).toString(), newRole);
 }
 
+
+
+@Put('full-update/:id')
+@Roles('ROLE_ADMIN')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@ApiBearerAuth()
+@ApiOkResponse({ description: 'Mise à jour complète réussie', type: User })
+async updateFullUser(
+  @Param('id') id: string,
+  @Body()updateUserDto: CreateUserDto,
+) {
+  return this.authService.updateFullUser(Number(id), updateUserDto);
+}
 }

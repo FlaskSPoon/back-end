@@ -11,7 +11,7 @@ export class CategoryServicesController {
   constructor(private readonly categoryServicesService: CategoryServicesService) {}
 
 
-   @Roles('ADMIN')
+   @Roles('ROLE_ADMIN')
     @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post()
   create(@Body() createCategoryServiceDto: CreateCategoryServiceDto) {
@@ -29,14 +29,14 @@ export class CategoryServicesController {
   }
 
 
-  @Roles('ADMIN')
+  @Roles('ROLE_ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCategoryServiceDto: UpdateCategoryServiceDto) {
     return this.categoryServicesService.update(+id, updateCategoryServiceDto);
   }
 
-  @Roles('ADMIN')
+  @Roles('ROLE_ADMIN')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {

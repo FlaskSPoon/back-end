@@ -20,8 +20,8 @@ export class CategoryService {
   createdAt: Date;
     
   
-      @ApiProperty()
-      @UpdateDateColumn()
-      updatedAt: Date;
+      // @ApiProperty()
+      // @UpdateDateColumn()
+      // updatedAt: Date;
 
 }
