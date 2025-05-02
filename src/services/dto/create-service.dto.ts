@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { IsDateString, IsDecimal, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class CreateServiceDto {
@@ -14,8 +15,8 @@ export class CreateServiceDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
   @IsPositive()
+  @Type(() => Number)
     price?: number;
   
 
@@ -24,12 +25,13 @@ export class CreateServiceDto {
     @IsDateString()
     createdAt :string
 
-    // @ApiProperty()
-    // @IsDateString()
-    // updatedAt :string
+    @ApiProperty({ type: 'string', format: 'binary', required: false })
+    @IsOptional()
+    image: string;
+
 
   @ApiProperty()
-  @IsOptional()
+  @IsString()
   @IsNotEmpty()
-  categoryId: number;
+  category: string;
 }

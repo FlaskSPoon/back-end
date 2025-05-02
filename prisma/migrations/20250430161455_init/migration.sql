@@ -21,8 +21,8 @@ CREATE TABLE `Article` (
     `datePublication` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `statut` ENUM('BROUILLON', 'PUBLIÉ', 'ARCHIVÉS') NOT NULL DEFAULT 'BROUILLON',
     `updatedAt` DATETIME(3) NOT NULL,
-    `categoryId` INTEGER NOT NULL,
-    `userId` INTEGER NOT NULL,
+    `category_id` INTEGER NOT NULL,
+    `user_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -101,6 +101,7 @@ CREATE TABLE `Service` (
     `name` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
     `price` DOUBLE NOT NULL,
+    `image` VARCHAR(191) NULL,
     `categoryId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -173,10 +174,10 @@ CREATE TABLE `NewsletterSubscriber` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Article` ADD CONSTRAINT `Article_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Article` ADD CONSTRAINT `Article_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Article` ADD CONSTRAINT `Article_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `CategoryArticle`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Article` ADD CONSTRAINT `Article_category_id_fkey` FOREIGN KEY (`category_id`) REFERENCES `CategoryArticle`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Evenement` ADD CONSTRAINT `Evenement_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `CategoryEvenement`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

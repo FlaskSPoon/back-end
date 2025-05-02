@@ -20,12 +20,12 @@ export class ServicesService {
     }
     async create(createServiceDto: CreateServiceDto) {
       // Vérification de la catégorie
-      const category = await this.categoryServiceRepository.findOneBy({ 
-        id: createServiceDto.categoryId 
+      const category = await this.categoryServiceRepository.findOne({ 
+       where:{name:createServiceDto.category}
       });
     
       if (!category) {
-        throw new NotFoundException(`Category with ID ${createServiceDto.categoryId} not found`);
+        throw new NotFoundException(`Category with name "${createServiceDto.category}" not found`);
       }
     
       // Création avec mapping explicite
@@ -33,6 +33,7 @@ export class ServicesService {
       service.name = createServiceDto.name;
       service.description = createServiceDto.description;
       service.price = Number(createServiceDto.price);
+      service.image=createServiceDto.image
       service.createdAt = createServiceDto.createdAt ? new Date(createServiceDto.createdAt) : new Date();
       service.category = category;
     
@@ -53,9 +54,9 @@ export class ServicesService {
   }
 
   async update(id: number, updateServiceDto: UpdateServiceDto): Promise<Service> {
-    const service = await this.serviceRepository.preload({
-      id,
-      ...updateServiceDto,
+    const service = await this.serviceRepository.findOne({
+      where:{id},
+      relations:['category']
     });
 
     if (!service) {

@@ -29,8 +29,8 @@ export class Service {
     createdAt: Date;
 
       
+    @ApiProperty({ required: false })
+    @Column({ nullable: true })
+    image?: string;
     
-        // @ApiProperty()
-        // @UpdateDateColumn()
-        // updatedAt: Date;
 }

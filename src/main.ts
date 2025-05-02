@@ -3,10 +3,12 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
+ // const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   // Configuration CORS complète et suffisante
   app.enableCors({
     origin: ['http://localhost:3000', 'https://fireshieldsec.com'],
@@ -36,5 +38,10 @@ async function bootstrap() {
 
   await app.listen(8000);
   console.log(`Application is running on: ${await app.getUrl()}`);
+
+    // Servir les fichiers statiques dans ./uploads
+    app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+      prefix: '/uploads/',
+    });
 }
 bootstrap();
