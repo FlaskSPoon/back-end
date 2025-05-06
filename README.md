@@ -2,4 +2,4 @@
 ![API](Swagger.png)
 
 
-![API](Swagger 2.png)
+![API](swagger2.png)
