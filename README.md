@@ -7,12 +7,6 @@
 
 
 ### Swagger2
-![API](swagger 2.png)
+![API](swagger%202.png)
+![API](Base%20de%20donn%C3%A9es.png)
 
-
-
-
-
-
-
-![API](Base de données.png)
