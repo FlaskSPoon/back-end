@@ -8,11 +8,14 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('services')
 export class ServicesController {
-  constructor(private readonly servicesService: ServicesService) {}
+  constructor(private readonly servicesService: ServicesService,
+    private readonly configService: ConfigService)
+   {}
 
   @Post()
   @Roles('ROLE_ADMIN')
@@ -20,7 +23,7 @@ export class ServicesController {
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './uploads/services',
+        destination: join(__dirname, '..', '..', 'uploads', 'services'),
         filename: (req, file, callback) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -35,7 +38,8 @@ export class ServicesController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if (file) {
-      createServiceDto.image = `/uploads/services/${file.filename}`;
+        const apiBaseUrl =this.configService.get<string>('API_BASE_URL');
+      createServiceDto.image = `${apiBaseUrl}/uploads/services/${file.filename}`;
     }
     return this.servicesService.create(createServiceDto);
   }

@@ -83,6 +83,7 @@ import { CategorieArticleModule } from './categorie-article/categorie-article.mo
     RessourceModule,
     NewlettreSubscribeModule,
     CategorieArticleModule,
+    ServicesModule
   ],
   controllers: [UserController],
   providers: [

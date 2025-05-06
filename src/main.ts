@@ -35,13 +35,13 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
+  app.useStaticAssets(join(__dirname, '..', '..', 'uploads','services'), {
+    prefix: '/uploads/services',
+  })
   await app.listen(8000);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  //console.log(`Application is running on: ${await app.getUrl()}`);
 
-    // Servir les fichiers statiques dans ./uploads
-    app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-      prefix: '/uploads/',
-    });
+   // console.log('Serving uploads from:', join(__dirname, '..', '..', 'uploads'));
+
 }
 bootstrap();

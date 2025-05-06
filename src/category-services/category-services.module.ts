@@ -7,11 +7,12 @@ import { ServicesService } from 'src/services/services.service';
 import { ServicesModule } from 'src/services/services.module';
 
 
+
 @Global()
 @Module({
   imports:[TypeOrmModule.forFeature([CategoryService])],
   controllers: [CategoryServicesController],
-  providers: [CategoryServicesService, CategoryService],
-  exports:[CategoryService,TypeOrmModule.forFeature([CategoryService])]
+  providers: [ServicesService,CategoryServicesService],
+  exports:[TypeOrmModule.forFeature([CategoryService])]
 })
 export class CategoryServicesModule {}
