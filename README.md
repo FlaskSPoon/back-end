@@ -4,4 +4,4 @@
 ### Swagger2
 ![API](./swagger 2.png)
 
-![API](../Base de données.png)
+![API](./Base de données.png)
