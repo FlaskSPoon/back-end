@@ -1,2 +1,2 @@
 #### Capture d'ecran
-![API](Swagger.png')
+![API](./Swagger.png')
