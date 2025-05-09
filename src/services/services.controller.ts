@@ -16,33 +16,34 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService,
     private readonly configService: ConfigService)
    {}
-
-  @Post()
-  @Roles('ROLE_ADMIN')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: join(__dirname, '..', '..', 'uploads', 'services'),
-        filename: (req, file, callback) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          callback(null, `${uniqueSuffix}${ext}`);
-        },
-      }),
-    }),
-  )
-  async create(
-    @Body() createServiceDto: CreateServiceDto,
-    @UploadedFile() file?: Express.Multer.File,
-  ) {
-    if (file) {
-        const apiBaseUrl =this.configService.get<string>('API_BASE_URL');
-      createServiceDto.image = `${apiBaseUrl}/uploads/services/${file.filename}`;
-    }
-    return this.servicesService.create(createServiceDto);
-  }
+   @Post()
+   @UseInterceptors(
+     FileInterceptor('image', {
+       storage: diskStorage({
+         destination: join(process.cwd(), 'uploads', 'services'),
+         filename: (req, file, callback) => {
+           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+           const ext = extname(file.originalname);
+           const filename = `${uniqueSuffix}${ext}`;
+           callback(null, filename);
+         },
+       }),
+     }),
+   )
+   async create(
+     @UploadedFile() file: Express.Multer.File,
+     @Body() body: any, 
+   ) {
+     const createServiceDto: CreateServiceDto = {
+       ...body,
+       price: Number(body.price),
+       image: file?.filename ?? null,
+     };
+ 
+     return this.servicesService.create(createServiceDto);
+   }
+ 
+   
 
   @Get()
   findAll() {
@@ -55,14 +56,29 @@ export class ServicesController {
   }
 
   
+@Put(':id')
+@Roles('ROLE_ADMIN')
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseInterceptors(
+  FileInterceptor('image', {
+    storage: diskStorage({
+      destination: join(process.cwd(), 'uploads', 'services'), // Dossier de destination
+      filename: (req, file, callback) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = extname(file.originalname);
+        callback(null, `${uniqueSuffix}${ext}`); // Nom unique
+      },
+    }),
+  }),
+)
+async update(
+  @Param('id') id: string,
+  @Body() updateServiceDto: UpdateServiceDto,
+  @UploadedFile() image?: Express.Multer.File,
+) {
+  return await this.servicesService.update(+id, updateServiceDto, image);
+}
 
-  @Put(':id')
-  @Roles('ROLE_ADMIN')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async update(@Param('id') id: string,@Body() updateServiceDto: UpdateServiceDto,
-  ) {
-    return await this.servicesService.update(+id, updateServiceDto);
-  }
 
   @Delete(':id')
   @Roles('ROLE_ADMIN')

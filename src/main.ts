@@ -39,9 +39,6 @@ async function bootstrap() {
     prefix: '/uploads/services',
   })
   await app.listen(8000);
-  //console.log(`Application is running on: ${await app.getUrl()}`);
-
-   // console.log('Serving uploads from:', join(__dirname, '..', '..', 'uploads'));
-
+ 
 }
 bootstrap();

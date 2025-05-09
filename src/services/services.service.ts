@@ -36,7 +36,7 @@ export class ServicesService {
       service.image=createServiceDto.image
       service.createdAt = createServiceDto.createdAt ? new Date(createServiceDto.createdAt) : new Date();
       service.category = category;
-    
+      // console.log('💾 Image finale en BDD :', createServiceDto.image);
       return this.serviceRepository.save(service);
     }
   
@@ -52,19 +52,61 @@ export class ServicesService {
     }
     return service;
   }
-
-  async update(id: number, updateServiceDto: UpdateServiceDto): Promise<Service> {
+  async update(
+    id: number,
+    updateServiceDto: UpdateServiceDto,
+    image?: Express.Multer.File,
+  ): Promise<Service> {
     const service = await this.serviceRepository.findOne({
-      where:{id},
-      relations:['category']
+      where: { id },
+      relations: ['category'],
     });
-
+  
     if (!service) {
       throw new NotFoundException(`Service avec l'ID ${id} non trouvé`);
     }
-
+  
+    // Gérer l'image uniquement si un fichier est fourni
+    if (image?.filename) {
+      console.log('Image reçue côté backend:', image.filename);
+      service.image = image.filename;
+    }
+  
+    // Gérer la catégorie si fournie
+    if (updateServiceDto.category) {
+      const category = await this.categoryServiceRepository.findOne({
+        where: { name: updateServiceDto.category },
+      });
+  
+      if (!category) {
+        throw new NotFoundException(
+          `Catégorie avec le nom "${updateServiceDto.category}" non trouvée`,
+        );
+      }
+  
+      service.category = category;
+    }
+  
+    // Mettre à jour les champs seulement s'ils sont présents
+    if (updateServiceDto.name !== undefined) {
+      service.name = updateServiceDto.name;
+    }
+  
+    if (updateServiceDto.description !== undefined) {
+      service.description = updateServiceDto.description;
+    }
+  
+    if (updateServiceDto.price !== undefined) {
+      service.price = updateServiceDto.price;
+    }
+  
+    if (updateServiceDto.createdAt !== undefined) {
+      service.createdAt = new Date(updateServiceDto.createdAt);
+    }
+  
     return await this.serviceRepository.save(service);
   }
+  
 
   async remove(id: number): Promise<{ message: string }> {
     const service = await this.serviceRepository.findOne({ where: { id } });
